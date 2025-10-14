@@ -7,6 +7,7 @@ const reportSchema = new mongoose.Schema({
   topMovies: [
     {
       movieId: { type: mongoose.Schema.Types.ObjectId, ref: "Movie" },
+      title: String,
       totalSales: Number,
     },
   ],

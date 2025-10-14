@@ -34,10 +34,11 @@ const AdminReports = () => {
           axios.get(`/api/admin/reports/occupancy`),
         ]);
 
+        const s = salesRes.data || {};
         setSales({
-          totalSales: salesRes.data?.totalSales || 0,
-          totalBookings: salesRes.data?.totalBookings || 0,
-          topMovies: salesRes.data?.topMovies || [],
+          totalSales: s.totalSales || 0,
+          totalBookings: s.totalBookings || 0,
+          topMovies: Array.isArray(s.topMovies) ? s.topMovies : [],
         });
 
         setOccupancy(Array.isArray(occRes.data) ? occRes.data : []);
@@ -60,7 +61,8 @@ const AdminReports = () => {
           Sales Summary (Last 7 Days)
         </h3>
         <p>
-          Total Sales: <strong>₹{(sales.totalSales || 0).toFixed(2)}</strong>
+          Total Sales:{" "}
+          <strong>₹{Number(sales.totalSales || 0).toFixed(2)}</strong>
         </p>
         <p>
           Total Bookings: <strong>{sales.totalBookings || 0}</strong>
@@ -70,9 +72,9 @@ const AdminReports = () => {
           <div className="mt-4">
             <h4 className="font-semibold mb-2">Top Movies:</h4>
             <ul className="list-disc ml-6">
-              {sales.topMovies.map((m) => (
-                <li key={m.movieId || m.title}>
-                  {m.title} — ₹{(m.totalSales || 0).toFixed(2)}
+              {sales.topMovies.map((m, i) => (
+                <li key={i}>
+                  {m.title} — ₹{Number(m.totalSales || 0).toFixed(2)}
                 </li>
               ))}
             </ul>
@@ -102,7 +104,9 @@ const AdminReports = () => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="startTime"
-              tickFormatter={(val) => new Date(val).toLocaleTimeString()}
+              tickFormatter={(val) =>
+                val ? new Date(val).toLocaleTimeString() : ""
+              }
             />
             <YAxis />
             <Tooltip
