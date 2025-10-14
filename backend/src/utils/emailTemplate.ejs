@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        color: #333;
+      }
+      .container {
+        max-width: 480px;
+        margin: auto;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 16px;
+      }
+      .header {
+        text-align: center;
+        color: #2e3a59;
+        font-weight: bold;
+        font-size: 18px;
+      }
+      .footer {
+        font-size: 12px;
+        color: #666;
+        text-align: center;
+        margin-top: 16px;
+      }
+      .details {
+        margin-top: 10px;
+      }
+      .details p {
+        margin: 4px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">🎬 Zimson Movie Ticket Confirmation</div>
+      <div class="details">
+        <p><strong>Hello <%= userName %>,</strong></p>
+        <p>Your ticket has been confirmed!</p>
+        <p><strong>Movie:</strong> <%= movieTitle %></p>
+        <p><strong>Showtime:</strong> <%= showTime %></p>
+        <p><strong>Seats:</strong> <%= seats %></p>
+        <p><strong>Booking ID:</strong> <%= bookingId %></p>
+      </div>
+      <div class="footer">
+        Please show the attached ticket PDF at the theater entrance.<br />
+        Thank you for choosing Zimson Cinemas!
+      </div>
+    </div>
+  </body>
+</html>

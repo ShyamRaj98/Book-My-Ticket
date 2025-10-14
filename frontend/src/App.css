@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Sedgwick+Ave+Display&display=swap');
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Fraunces", serif;
+}
+
+p {
+    font-family: "Noto Sans", sans-serif;
+}
+
+.logo {
+    font-family: "Sedgwick Ave Display", cursive;
+}
+
+button {
+    cursor: pointer;
+}
+
+.movie-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.movie-plot {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    display: none;
+}
