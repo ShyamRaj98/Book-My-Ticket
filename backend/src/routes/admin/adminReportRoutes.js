@@ -1,22 +1,33 @@
+// backend/routes/admin/AdminReportRoutes.js
 import express from "express";
 import Booking from "../../models/Booking.js";
-import Report from "../../models/Report.js";
 import Showtime from "../../models/Showtime.js";
-import { requireAdmin } from "../../middlewares/admin.js";
+import Report from "../../models/Report.js";
 import { auth } from "../../middlewares/auth.js";
+import { requireAdmin } from "../../middlewares/admin.js";
 
 const router = express.Router();
 
-// 📊 SALES REPORT (Last 7 Days)
+/**
+ * ===============================
+ * 📊 SALES REPORT (Last 7 Days)
+ * GET /api/admin/reports/sales?from=&to=
+ * ===============================
+ */
 router.get("/sales", auth, requireAdmin, async (req, res) => {
   try {
     const { from, to } = req.query;
     const start = new Date(from);
     const end = new Date(to);
 
-    // Calculate total sales & bookings
+    // 🔹 Total sales and booking count
     const result = await Booking.aggregate([
-      { $match: { createdAt: { $gte: start, $lt: end }, status: "paid" } },
+      {
+        $match: {
+          createdAt: { $gte: start, $lt: end },
+          status: { $in: ["paid", "completed", "success"] },
+        },
+      },
       {
         $group: {
           _id: null,
@@ -28,9 +39,14 @@ router.get("/sales", auth, requireAdmin, async (req, res) => {
 
     const data = result[0] || { total: 0, count: 0 };
 
-    // Top 5 movies by sales
+    // 🔹 Top Movies by Sales
     const topMovies = await Booking.aggregate([
-      { $match: { createdAt: { $gte: start, $lt: end }, status: "paid" } },
+      {
+        $match: {
+          createdAt: { $gte: start, $lt: end },
+          status: { $in: ["paid", "completed", "success"] },
+        },
+      },
       {
         $group: {
           _id: "$movie.title",
@@ -39,15 +55,10 @@ router.get("/sales", auth, requireAdmin, async (req, res) => {
       },
       { $sort: { totalSales: -1 } },
       { $limit: 5 },
-      {
-        $project: {
-          _id: 0,
-          title: "$_id",
-          totalSales: 1,
-        },
-      },
+      { $project: { _id: 0, title: "$_id", totalSales: 1 } },
     ]);
 
+    // 🔹 Save/update report in DB
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -75,29 +86,50 @@ router.get("/sales", auth, requireAdmin, async (req, res) => {
   }
 });
 
-// 🎟️ OCCUPANCY REPORT
+/**
+ * ===============================
+ * 🎟️ OCCUPANCY REPORT
+ * GET /api/admin/reports/occupancy?movieId=
+ * ===============================
+ */
 router.get("/occupancy", auth, requireAdmin, async (req, res) => {
   try {
-    const showtimes = await Showtime.find({})
-      .populate("movie", "title")
-      .populate("theater", "name seatLayout")
-      .lean();
+    const { movieId } = req.query;
 
-    const data = showtimes.map((s) => {
-      const totalSeats = s.theater?.seatLayout?.length || 0;
-      const bookedSeats = s.bookedSeats?.length || 0;
+    // Paid bookings grouped by showtime
+    const occupancyData = await Booking.aggregate([
+      { $match: { status: { $in: ["paid", "completed", "success"] } } },
+      {
+        $group: {
+          _id: "$showtime",
+          bookedSeats: { $sum: { $size: "$seats" } },
+        },
+      },
+    ]);
+
+    // Showtime details
+    const showtimes = await Showtime.find(movieId ? { movie: movieId } : {})
+      .populate("movie")
+      .sort({ startTime: 1 });
+
+    const result = showtimes.map((show) => {
+      const found = occupancyData.find(
+        (b) => b._id?.toString() === show._id.toString()
+      );
+      const booked = found ? found.bookedSeats : 0;
+      const totalSeats = show.seats?.length || 0;
       const occupancy =
-        totalSeats > 0 ? ((bookedSeats / totalSeats) * 100).toFixed(1) : 0;
+        totalSeats > 0 ? Number(((booked / totalSeats) * 100).toFixed(1)) : 0;
 
       return {
-        movie: s.movie?.title || "Unknown",
-        theater: s.theater?.name || "N/A",
-        startTime: s.startTime,
-        occupancy: parseFloat(occupancy),
+        showtimeId: show._id,
+        movie: show.movie?.title || "N/A",
+        startTime: show.startTime,
+        occupancy,
       };
     });
 
-    res.json(data);
+    res.json(result);
   } catch (err) {
     console.error("❌ getOccupancyReport error:", err);
     res.status(500).json({ message: err.message });

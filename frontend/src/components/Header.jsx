@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { IoSearch } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
+import { logout } from "../features/auth/authSlice";
 
 function Header() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ function Header() {
             Book<span className="text-red-600">My</span>Ticket
           </h1>
         </Link>
-        <div className="flex justify-end items-center gap-3">
+        <div className="w-full ml-5 flex justify-end items-center gap-3">
           <IoSearch
             size={24}
             color="red"
@@ -36,7 +37,7 @@ function Header() {
               </Link>
               <button
                 onClick={handleLogout}
-                className="hidden md:block text-red-500 bg-white w-full md:w-fit hover:bg-gray-100 p-2 font-semibold border-1 border-gray-300 rounded-xl shadow-xl"
+                className="hidden md:block w-fit text-red-500 bg-white md:w-fit hover:bg-gray-100 p-2 font-semibold border-1 border-gray-300 rounded-xl shadow-xl"
               >
                 Logout
               </button>
@@ -45,13 +46,13 @@ function Header() {
             <>
               <Link
                 to="/login"
-                className="bg-white w-full md:w-fit hover:bg-gray-100 p-2 font-semibold border-1 border-gray-300 rounded-xl shadow-xl"
+                className="bg-white w-fit hover:bg-gray-100 p-2 font-semibold border-1 border-gray-300 rounded-xl shadow-xl"
               >
                 Login
               </Link>
               <Link
                 to="/register"
-                className="bg-white w-full md:w-fit hover:bg-gray-100 p-2 font-semibold border-1 border-gray-300 rounded-xl shadow-xl"
+                className="bg-white w-fit hover:bg-gray-100 p-2 font-semibold border-1 border-gray-300 rounded-xl shadow-xl"
               >
                 Register
               </Link>

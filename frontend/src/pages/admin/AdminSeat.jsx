@@ -1,6 +1,6 @@
-// src/pages/AdminSeat.jsx
 import React, { useEffect, useState } from "react";
-import api from "../../api/axios.js";
+import api from "../../api/axios";
+import { InputField, SelectInput } from "../../components/InputFields.jsx";
 
 export default function AdminSeat() {
   const [layouts, setLayouts] = useState([]);
@@ -13,8 +13,8 @@ export default function AdminSeat() {
 
   const seatColors = {
     regular: "bg-green-200",
-    premium: "bg-yellow-300",
-    vip: "bg-purple-300",
+    premium: "bg-blue-200",
+    vip: "bg-purple-200",
     unavailable: "bg-gray-300",
   };
 
@@ -54,11 +54,13 @@ export default function AdminSeat() {
     setSelectedSeat(seats[i]);
   }
 
-  function updateSeatType(type) {
+  function updateSeat(type, price) {
     if (!selectedSeat) return;
     setSeats((prev) =>
       prev.map((s) =>
-        s.seatId === selectedSeat.seatId ? { ...s, type } : s
+        s.seatId === selectedSeat.seatId
+          ? { ...s, type: type || s.type, price: price || s.price }
+          : s
       )
     );
     setSelectedSeat(null);
@@ -72,10 +74,10 @@ export default function AdminSeat() {
           name: layoutName,
           seats,
         });
-        alert("Layout updated");
+        alert("Layout updated successfully");
       } else {
         await api.post("/admin/seat-layouts", { name: layoutName, seats });
-        alert("Layout created");
+        alert("Layout created successfully");
       }
       setLayoutName("");
       setSelectedLayout(null);
@@ -99,7 +101,7 @@ export default function AdminSeat() {
     if (!window.confirm("Delete this layout?")) return;
     try {
       await api.delete(`/admin/seat-layouts/${id}`);
-      alert("Deleted");
+      alert("Layout deleted");
       fetchLayouts();
       if (selectedLayout === id) {
         setSelectedLayout(null);
@@ -113,57 +115,47 @@ export default function AdminSeat() {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">🎭 Seat Layout Templates</h1>
+    <div className="p-6 space-y-10 bg-gray-50 min-h-screen">
+      <h1 className="text-3xl font-bold text-gray-800 border-b pb-3">
+        🎭 Seat Layout Editor
+      </h1>
 
-      {/* Controls */}
-      <div className="flex gap-2 bg-white p-4 rounded shadow flex-wrap">
-        <input
-          placeholder="Layout name"
-          className="border p-2 rounded"
+      {/* Controls Section */}
+      <div className="bg-white p-3 md:p-6 rounded-xl shadow-lg grid lg:grid-cols-3 md:grid-cols-2 gap-5">
+        <InputField
+          label="Layout Name"
           value={layoutName}
           onChange={(e) => setLayoutName(e.target.value)}
+          placeholder="Enter layout name"
         />
-        <input
+        <InputField
+          label="Rows"
           type="number"
-          className="border p-2 rounded w-20"
           value={rows}
           onChange={(e) => setRows(Number(e.target.value))}
         />
-        <input
+        <InputField
+          label="Columns"
           type="number"
-          className="border p-2 rounded w-20"
           value={cols}
           onChange={(e) => setCols(Number(e.target.value))}
         />
         <button
           onClick={() => generateLayout(rows, cols)}
-          className="bg-blue-600 text-white px-3 py-1 rounded"
+          className="self-end bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
         >
           Generate
         </button>
         <button
           onClick={saveLayout}
-          className="bg-green-600 text-white px-3 py-1 rounded"
+          className="self-end bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
         >
           {selectedLayout ? "Update" : "Save"}
         </button>
-        {selectedLayout && (
-          <button
-            onClick={() => {
-              setSelectedLayout(null);
-              setLayoutName("");
-              generateLayout(rows, cols);
-            }}
-            className="bg-gray-400 text-white px-3 py-1 rounded"
-          >
-            Cancel
-          </button>
-        )}
       </div>
 
-      {/* Layout Grid */}
-      <div className="overflow-auto border rounded bg-gray-50 p-4">
+      {/* Seat Grid */}
+      <div className="overflow-auto border rounded-xl bg-white p-3 md:p-6 shadow-md">
         <div
           className="grid gap-2 justify-center"
           style={{
@@ -175,7 +167,7 @@ export default function AdminSeat() {
             <div
               key={s.seatId}
               onClick={() => handleSeatClick(i)}
-              className={`flex items-center justify-center border rounded cursor-pointer ${
+              className={`flex items-center justify-center border rounded text-xs font-semibold cursor-pointer transition-all hover:scale-105 ${
                 seatColors[s.type]
               }`}
               title={`${s.seatId} • ${s.type} • ₹${s.price}`}
@@ -187,29 +179,42 @@ export default function AdminSeat() {
         </div>
       </div>
 
-      {/* Seat type selector popup */}
+      {/* Seat Edit Modal */}
       {selectedSeat && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg space-y-4">
-            <h3 className="text-lg font-semibold">
-              Edit Seat {selectedSeat.seatId}
-            </h3>
-            <select
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white w-96 p-6 rounded-lg shadow-2xl space-y-5 relative">
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+              Edit Seat — {selectedSeat.seatId}
+            </h2>
+
+            <SelectInput
+              label="Seat Type"
               value={selectedSeat.type}
-              onChange={(e) => updateSeatType(e.target.value)}
-              className="border p-2 rounded w-full"
-            >
-              <option value="regular">Regular</option>
-              <option value="premium">Premium</option>
-              <option value="vip">VIP</option>
-              <option value="unavailable">Unavailable</option>
-            </select>
-            <div className="flex justify-end gap-2">
+              onChange={(v) => updateSeat(v)}
+              options={[
+                { label: "Regular", value: "regular" },
+                { label: "Premium", value: "premium" },
+                { label: "VIP", value: "vip" },
+                { label: "Unavailable", value: "unavailable" },
+              ]}
+            />
+
+            <InputField
+              label="Price (₹)"
+              type="number"
+              value={selectedSeat.price}
+              onChange={(e) =>
+                updateSeat(selectedSeat.type, Number(e.target.value))
+              }
+              placeholder="Enter seat price"
+            />
+
+            <div className="flex justify-end gap-3">
               <button
                 onClick={() => setSelectedSeat(null)}
-                className="bg-gray-300 px-3 py-1 rounded"
+                className="px-4 py-2 rounded-lg bg-gray-400 text-white hover:bg-gray-500"
               >
-                Cancel
+                Close
               </button>
             </div>
           </div>
@@ -217,37 +222,43 @@ export default function AdminSeat() {
       )}
 
       {/* Saved Layouts */}
-      <div>
-        <h2 className="text-lg font-semibold mt-4">Saved Layouts</h2>
-        <ul className="space-y-2">
-          {layouts.map((l) => (
-            <li
-              key={l._id}
-              className="flex justify-between items-center bg-white border p-3 rounded"
-            >
-              <div>
-                <div className="font-semibold">{l.name}</div>
-                <div className="text-sm text-gray-600">
-                  {l.seats.length} seats
+      <div className="bg-white p-6 rounded-xl shadow-lg">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">
+          💾 Saved Layouts
+        </h2>
+        {layouts.length === 0 ? (
+          <p className="text-gray-500 italic">No saved layouts yet.</p>
+        ) : (
+          <ul className="space-y-3">
+            {layouts.map((l) => (
+              <li
+                key={l._id}
+                className="flex justify-between items-center border p-3 rounded-lg hover:bg-gray-50 transition"
+              >
+                <div>
+                  <div className="font-medium text-gray-700">{l.name}</div>
+                  <div className="text-sm text-gray-500">
+                    {l.seats.length} seats
+                  </div>
                 </div>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => loadLayout(l)}
-                  className="text-blue-600 hover:underline"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => deleteLayout(l._id)}
-                  className="text-red-600 hover:underline"
-                >
-                  Delete
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => loadLayout(l)}
+                    className="text-blue-600 hover:underline"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => deleteLayout(l._id)}
+                    className="text-red-600 hover:underline"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );

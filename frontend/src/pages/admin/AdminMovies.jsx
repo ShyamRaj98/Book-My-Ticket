@@ -151,7 +151,7 @@ export default function AdminMovies() {
   return (
     <div className="h-[calc(100vh-64px)] overflow-y-auto p-6 bg-gray-50 text-gray-800 space-y-10">
       {/* Manual Form */}
-      <div className="bg-white p-6 rounded-2xl shadow-md">
+      <div className="bg-white p-6 rounded-2xl border-x-4 border-red-600 shadow-md">
         <h2 className="text-2xl font-semibold mb-4 text-red-600">
           {editingId ? "Edit Movie" : "Add Movie Manually"}
         </h2>
@@ -220,7 +220,7 @@ export default function AdminMovies() {
       </div>
 
       {/* Live TMDb Search */}
-      <div className="bg-white p-6 rounded-2xl shadow-md">
+      <div className="bg-white p-6 rounded-2xl border-x-4 border-red-600 shadow-md">
         <h2 className="text-2xl font-semibold mb-4 text-red-600">
           Search from TMDb (Live)
         </h2>

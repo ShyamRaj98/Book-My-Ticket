@@ -1,18 +1,37 @@
+// server/config/connectDB.js
 import mongoose from "mongoose";
 import { startHoldCleaner } from "../services/holdsCleaner.js";
 
-// const MONGODB_URI = `mongodb+srv://shyamdeepu1998_db_user:SmXraqiDppajpM0l@moviebooking.joshwfq.mongodb.net/MovieTicketBooking?retryWrites=true&w=majority&appName=movieBooking`;
+let stopHoldCleaner = null;
 
 const connectDB = async () => {
+  const MONGO_URI = process.env.MONGO_URI;
+
+  if (!MONGO_URI) {
+    console.error("❌ MONGO_URI not found in environment variables");
+    process.exit(1);
+  }
+
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI);
+    const conn = await mongoose.connect(MONGO_URI);
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
 
-    startHoldCleaner();
+    // Start the hold cleaner service
+    stopHoldCleaner = startHoldCleaner();
+    console.log("🧹 Hold cleaner service started successfully");
+
+    // Graceful shutdown
+    process.on("SIGINT", () => {
+      if (stopHoldCleaner) stopHoldCleaner();
+      mongoose.connection.close(() => {
+        console.log("🔌 MongoDB connection closed");
+        process.exit(0);
+      });
+    });
   } catch (err) {
-    console.error(`❌ Error: ${err.message}`);
+    console.error(`❌ MongoDB Connection Error: ${err.message}`);
     process.exit(1);
-  }  
+  }
 };
 
 export default connectDB;

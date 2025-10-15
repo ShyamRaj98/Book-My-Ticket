@@ -34,11 +34,10 @@ const AdminReports = () => {
           axios.get(`/api/admin/reports/occupancy`),
         ]);
 
-        const s = salesRes.data || {};
         setSales({
-          totalSales: s.totalSales || 0,
-          totalBookings: s.totalBookings || 0,
-          topMovies: Array.isArray(s.topMovies) ? s.topMovies : [],
+          totalSales: salesRes.data?.totalSales || 0,
+          totalBookings: salesRes.data?.totalBookings || 0,
+          topMovies: salesRes.data?.topMovies || [],
         });
 
         setOccupancy(Array.isArray(occRes.data) ? occRes.data : []);
@@ -72,8 +71,8 @@ const AdminReports = () => {
           <div className="mt-4">
             <h4 className="font-semibold mb-2">Top Movies:</h4>
             <ul className="list-disc ml-6">
-              {sales.topMovies.map((m, i) => (
-                <li key={i}>
+              {sales.topMovies.map((m) => (
+                <li key={m.title}>
                   {m.title} — ₹{Number(m.totalSales || 0).toFixed(2)}
                 </li>
               ))}
@@ -82,7 +81,7 @@ const AdminReports = () => {
         )}
       </div>
 
-      {/* 🎟️ Occupancy Chart */}
+      {/* 🎟️ Occupancy Bar Chart */}
       <div className="bg-white p-6 rounded-lg shadow">
         <h3 className="text-xl font-semibold mb-4">Occupancy Report</h3>
         <ResponsiveContainer width="100%" height={300}>
@@ -104,9 +103,7 @@ const AdminReports = () => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
               dataKey="startTime"
-              tickFormatter={(val) =>
-                val ? new Date(val).toLocaleTimeString() : ""
-              }
+              tickFormatter={(val) => new Date(val).toLocaleTimeString()}
             />
             <YAxis />
             <Tooltip

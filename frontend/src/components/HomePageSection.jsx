@@ -4,44 +4,47 @@ import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { Link } from "react-router-dom";
 
 export function MovieCarousel({ movies }) {
   return (
-    <div className="px-8 my-8">
+    <div className="my-8">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Recommended Movies</h2>
-        <a href="#" className="text-red-500 text-sm">
+        <h2 className="text-2xl font-bold">Recommended Movies</h2>
+        <a
+          href="#"
+          className="text-red-500 text-sm font-medium p-2 border-1 border-gray-300 rounded shadow-lg"
+        >
           See All ›
         </a>
       </div>
 
       <Swiper
         modules={[Navigation]}
-        navigation
         spaceBetween={20}
         slidesPerView={2}
         breakpoints={{
+          500: { slidesPerView: 2 },
           640: { slidesPerView: 3 },
           1024: { slidesPerView: 5 },
         }}
       >
         {movies.map((movie) => (
-          <SwiperSlide key={movie.id}>
-            <div className="rounded-xl overflow-hidden shadow hover:scale-105 transition">
-              <img
-                src={movie.image}
-                alt={movie.title}
-                className="w-full h-64 object-cover"
-              />
-              <div className="p-2">
-                <h3 className="font-semibold text-sm">{movie.title}</h3>
-                {movie.promoted && (
-                  <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded mt-1 inline-block">
-                    PROMOTED
-                  </span>
-                )}
+          <SwiperSlide key={movie.id} className="my-2">
+            <Link to={movie.link || "#"} >
+              <div className="h-full rounded-xl shadow transition overflow-hidden">
+                <div className="h-full overflow-hidden">
+                  <img
+                    src={movie.image}
+                    alt={movie.title}
+                    className="w-full h-full object-cover transition hover:scale-105"
+                  />
+                </div>
+                <div className="p-2 h-[50px]">
+                  <h3 className="font-semibold text-md line-clamp-2">{movie.title}</h3>
+                </div>
               </div>
-            </div>
+            </Link>
           </SwiperSlide>
         ))}
       </Swiper>

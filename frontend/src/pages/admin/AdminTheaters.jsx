@@ -69,7 +69,7 @@ export default function AdminTheater() {
       {/* Form Section */}
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col md:flex-row gap-4 bg-white p-5 rounded-xl shadow-md border-l-4 border-red-600"
+        className="flex flex-col md:flex-row gap-4 bg-white p-5 rounded-xl shadow-md border-x-4 border-red-600"
       >
         <InputField
           label="Theater Name"
@@ -127,7 +127,7 @@ export default function AdminTheater() {
         {theaters.map((t) => (
           <div
             key={t._id}
-            className="flex justify-between items-center bg-white border-l-4 border-red-600 rounded-lg p-4 shadow-sm hover:shadow-md transition"
+            className="flex justify-between items-center bg-white border-x-4 border-red-600 rounded-lg p-4 shadow-sm hover:shadow-md transition"
           >
             <div>
               <div className="font-semibold text-lg text-red-700">{t.name}</div>

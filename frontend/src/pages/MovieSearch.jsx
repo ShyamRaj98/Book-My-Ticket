@@ -60,7 +60,7 @@ export default function MovieSearch() {
       </form>
 
       {loading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
           {Array(10)
             .fill(0)
             .map((_, i) => (

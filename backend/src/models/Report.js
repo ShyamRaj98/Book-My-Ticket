@@ -1,3 +1,4 @@
+// backend/models/Report.js
 import mongoose from "mongoose";
 
 const reportSchema = new mongoose.Schema({
@@ -6,7 +7,6 @@ const reportSchema = new mongoose.Schema({
   totalBookings: { type: Number, default: 0 },
   topMovies: [
     {
-      movieId: { type: mongoose.Schema.Types.ObjectId, ref: "Movie" },
       title: String,
       totalSales: Number,
     },

@@ -1,8 +1,8 @@
-// client/src/pages/Login.jsx
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
+import { InputField, PasswordField } from "../components/InputFields.jsx";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -19,41 +19,44 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="w-full max-w-md bg-white border rounded-2xl shadow-lg p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="w-full max-w-md bg-white border-red-500 border-y-4 border rounded-2xl shadow-2xl p-8">
         <h2 className="text-3xl font-bold text-center text-red-600 mb-6">
-          Sign In
+          Welcome Back
         </h2>
-        <form onSubmit={onSubmit} className="space-y-4">
-          <input
+        <form onSubmit={onSubmit} className="space-y-5">
+          <InputField
             name="email"
-            placeholder="Email"
+            type="email"
+            placeholder="Enter your email"
             value={form.email}
             onChange={onChange}
-            className="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
           />
-          <input
-            type="password"
+
+          <PasswordField
             name="password"
-            placeholder="Password"
             value={form.password}
             onChange={onChange}
-            className="w-full border border-gray-300 p-3 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+            placeholder="Enter your password"
           />
+
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition"
+            className="w-full py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 active:scale-[0.98] transition"
           >
             {loading ? "Signing in..." : "Login"}
           </button>
-          {error && <p className="text-center text-red-500">{error}</p>}
+
+          {error && (
+            <p className="text-center text-red-500 font-medium">{error}</p>
+          )}
         </form>
 
-        <p className="text-center mt-4 text-gray-600">
+        <p className="text-center mt-6 text-gray-600">
           Don’t have an account?{" "}
           <span
-            className="text-red-600 cursor-pointer hover:underline"
+            className="text-red-600 cursor-pointer hover:underline font-semibold"
             onClick={() => navigate("/register")}
           >
             Register

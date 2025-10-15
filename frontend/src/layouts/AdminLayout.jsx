@@ -76,8 +76,8 @@ export default function AdminLayout() {
               to={item.path}
               className={`flex items-center gap-3 px-2 py-2 rounded-md transition-all font-medium ${
                 active
-                  ? "bg-red-600 text-white"
-                  : "text-gray-700 hover:bg-red-100"
+                  ? "bg-red-100 text-red-500 border-x-4 border-red-600"
+                  : "text-gray-700 hover:bg-red-100 border-x-4 border-transparent hover:border-red-600"
               }`}
             >
               {item.icon}

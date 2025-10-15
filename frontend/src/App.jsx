@@ -39,7 +39,7 @@ function AppContent() {
   }, [auth.token, auth.user, dispatch]);
 
   // Check if current route is admin
-  const isAdminRoute = location.pathname.startsWith("/admin");
+  const isAdminRoute = ["/admin", "/register-admin", "/login", "/register"].find((path) => location.pathname.startsWith(path));
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
