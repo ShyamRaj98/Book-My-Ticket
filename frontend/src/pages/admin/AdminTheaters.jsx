@@ -64,7 +64,7 @@ export default function AdminTheater() {
 
   return (
     <div className="p-6 space-y-6 bg-red-50 min-h-screen">
-      <h1 className="text-2xl font-bold text-red-700">🎬 Theater Management</h1>
+      <h1 className="text-2xl font-bold text-red-700">Theater Management</h1>
 
       {/* Form Section */}
       <form

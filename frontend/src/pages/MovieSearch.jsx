@@ -1,7 +1,5 @@
-// client/src/pages/MovieSearch.jsx
 import React, { useEffect, useState } from "react";
 import api from "../api/axios.js";
-import { Link } from "react-router-dom";
 import { IoSearch } from "react-icons/io5";
 import MovieCard from "../components/MovieCard.jsx";
 
@@ -10,15 +8,39 @@ export default function MovieSearch() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Fetch all movies by default
+  const fetchMovies = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get("/movies");
+      setResults(res.data.data || []);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to load movies");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMovies();
+  }, []);
+
   const doSearch = async (e) => {
     if (e) e.preventDefault();
-    if (!q) return;
+    if (!q) {
+      // if search empty, show all movies again
+      fetchMovies();
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await api.get("/movies", { params: { q } });
       if (res.data.data && res.data.data.length) {
         setResults(res.data.data);
       } else {
+        // fallback TMDB search
         const tmdb = await api.get("/movies/tmdb-search", { params: { q } });
         setResults(
           (tmdb.data.results || []).map((item) => ({

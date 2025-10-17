@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axios.js";
+import { InputField, SelectInput } from "../../components/InputFields.jsx";
 
 export default function AdminShowtimes() {
   const [movies, setMovies] = useState([]);
@@ -81,16 +82,31 @@ export default function AdminShowtimes() {
 
   function openEditModal(st) {
     setEditShowtime({ ...st });
-    setSeatPrices(
-      st.seats.map((s) => ({ seatId: s.seatId, type: s.type, price: s.price }))
-    );
+
+    // Always include regular, premium, and vip with default 0 price
+    const types = ["regular", "premium", "vip"];
+    const prices = types.map((type) => {
+      const seat = st.seats.find((s) => s.type === type);
+      return { type, price: seat ? seat.price : 0 };
+    });
+
+    // Also include all individual seat data
+    const allSeats = st.seats.map((s) => ({
+      seatId: s.seatId,
+      type: s.type,
+      price: s.price,
+    }));
+
+    // Merge: keep unique seat types + all seats
+    setSeatPrices([...prices, ...allSeats]);
   }
 
   function updateSeatTypePrice(type, newPrice) {
-    const updated = seatPrices.map((s) =>
-      s.type === type ? { ...s, price: newPrice } : s
+    setSeatPrices((prev) =>
+      prev.map((s) =>
+        s.type === type ? { ...s, price: Number(newPrice) } : s
+      )
     );
-    setSeatPrices(updated);
   }
 
   async function saveEdit() {
@@ -114,79 +130,73 @@ export default function AdminShowtimes() {
       <h1 className="text-2xl font-bold">Showtime Management</h1>
 
       {/* Create Showtime */}
-      <form
-        onSubmit={createShowtime}
-        className="grid grid-cols-1 md:grid-cols-4 gap-2"
-      >
-        <select
-          value={form.movieId}
-          onChange={(e) => setForm({ ...form, movieId: e.target.value })}
-          className="border p-2 rounded"
-        >
-          <option value="">Select Movie</option>
-          {movies.map((m) => (
-            <option key={m._id} value={m._id}>
-              {m.title}
-            </option>
-          ))}
-        </select>
+      <form onSubmit={createShowtime}>
+        <div className="flex flex-col gap-3 ">
+          <div className="flex flex-col md:flex-row gap-3 ">
+            <SelectInput
+              label="Select Movie"
+              value={form.movieId}
+              onChange={(val) => setForm({ ...form, movieId: val })}
+              options={movies.map((m) => ({ value: m._id, label: m.title }))}
+            />
 
-        <select
-          value={form.theaterId}
-          onChange={(e) => setForm({ ...form, theaterId: e.target.value })}
-          className="border p-2 rounded"
-        >
-          <option value="">Select Theater</option>
-          {theaters.map((t) => (
-            <option key={t._id} value={t._id}>
-              {t.name}
-            </option>
-          ))}
-        </select>
+            <SelectInput
+              label="Select Theater"
+              value={form.theaterId}
+              onChange={(val) => setForm({ ...form, theaterId: val })}
+              options={theaters.map((t) => ({ value: t._id, label: t.name }))}
+            />
+          </div>
 
-        <select
-          value={form.screenName}
-          onChange={(e) => setForm({ ...form, screenName: e.target.value })}
-          className="border p-2 rounded"
-        >
-          <option value="">Select Screen</option>
-          {screenOptions.map((s, idx) => (
-            <option key={idx} value={s.name}>
-              {s.name} ({s.seats.length} seats)
-            </option>
-          ))}
-        </select>
+          <div className="flex flex-col md:flex-row gap-3">
+            <SelectInput
+              label="Select Screen"
+              value={form.screenName}
+              onChange={(val) => setForm({ ...form, screenName: val })}
+              options={screenOptions.map((s) => ({
+                value: s.name,
+                label: `${s.name} (${s.seats.length} seats)`,
+              }))}
+              placeholder="Select screen"
+            />
 
-        <input
-          type="datetime-local"
-          value={form.startTime}
-          onChange={(e) => setForm({ ...form, startTime: e.target.value })}
-          className="border p-2 rounded"
-        />
+            <InputField
+              label="Start Time"
+              type="datetime-local"
+              value={form.startTime}
+              onChange={(val) => setForm({ ...form, startTime: val })}
+            />
+          </div>
 
-        <select
-          value={form.language}
-          onChange={(e) => setForm({ ...form, language: e.target.value })}
-          className="border p-2 rounded"
-        >
-          <option value="English">English</option>
-          <option value="Hindi">Hindi</option>
-          <option value="Tamil">Tamil</option>
-        </select>
+          <div className="flex flex-col md:flex-row gap-3 ">
+            <SelectInput
+              label="Language"
+              value={form.language}
+              onChange={(val) => setForm({ ...form, language: val })}
+              options={[
+                { value: "English", label: "English" },
+                { value: "Hindi", label: "Hindi" },
+                { value: "Tamil", label: "Tamil" },
+                { value: "Malayalam", label: "Malayalam" },
+              ]}
+            />
 
-        <select
-          value={form.format}
-          onChange={(e) => setForm({ ...form, format: e.target.value })}
-          className="border p-2 rounded"
-        >
-          <option value="2D">2D</option>
-          <option value="3D">3D</option>
-          <option value="IMAX">IMAX</option>
-        </select>
+            <SelectInput
+              label="Format"
+              value={form.format}
+              onChange={(val) => setForm({ ...form, format: val })}
+              options={[
+                { value: "2D", label: "2D" },
+                { value: "3D", label: "3D" },
+                { value: "IMAX", label: "IMAX" },
+              ]}
+            />
+          </div>
 
-        <button className="bg-green-600 text-white px-3 py-1 rounded col-span-full md:col-auto">
-          Create Showtime
-        </button>
+          <button className="w-fit mx-auto bg-green-600 text-white px-3 py-2 rounded">
+            Create Showtime
+          </button>
+        </div>
       </form>
 
       {/* Showtime List */}
@@ -194,9 +204,9 @@ export default function AdminShowtimes() {
         {showtimes.map((st) => (
           <div
             key={st._id}
-            className="flex justify-between p-2 border rounded items-center"
+            className="flex justify-between p-2 border border-red-500 border-x-4 rounded-xl items-center flex-wrap"
           >
-            <div>
+            <div className="flex-1 min-w-[200px]">
               <div className="font-semibold">{st.movie?.title || "—"}</div>
               <div className="text-sm text-gray-500">
                 {new Date(st.startTime).toLocaleString()} —{" "}
@@ -204,7 +214,7 @@ export default function AdminShowtimes() {
                 {st.format}
               </div>
             </div>
-            <div className="space-x-2">
+            <div className="flex gap-2 mt-1">
               <button
                 onClick={() => openEditModal(st)}
                 className="bg-blue-500 text-white px-3 py-1 rounded"
@@ -224,91 +234,70 @@ export default function AdminShowtimes() {
 
       {/* Edit Modal */}
       {editShowtime && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded w-2/3 max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white p-6 rounded w-full max-w-2xl max-h-[100vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">
-              Edit Showtime: {editShowtime.movie?.title}
+              Edit Showtime:{" "}
+              <span className="text-red-500">
+                {editShowtime.movie?.title || ""}
+              </span>
             </h2>
 
-            <label className="block mb-2">
-              Start Time:
-              <input
-                type="datetime-local"
-                value={new Date(editShowtime.startTime)
-                  .toISOString()
-                  .slice(0, 16)}
-                onChange={(e) =>
-                  setEditShowtime({
-                    ...editShowtime,
-                    startTime: e.target.value,
-                  })
-                }
-                className="border p-2 rounded w-full"
-              />
-            </label>
+            <InputField
+              label="Start Time"
+              type="datetime-local"
+              value={new Date(editShowtime.startTime)
+                .toISOString()
+                .slice(0, 16)}
+              onChange={(val) =>
+                setEditShowtime({ ...editShowtime, startTime: val })
+              }
+            />
 
-            <h3 className="mt-4 font-semibold">Bulk Seat Price Update</h3>
-            <div className="flex gap-4 mb-4">
-              <div>
-                <label>Regular:</label>
-                <input
+            <h3 className="pt-2 mt-4 font-semibold border-t-1 border-gray-500">
+              Bulk Seat Price Update
+            </h3>
+            <div className="flex gap-4 flex-wrap mb-4">
+              {["regular", "premium", "vip"].map((type) => (
+                <InputField
+                  key={type}
+                  label={type.charAt(0).toUpperCase() + type.slice(1)}
                   type="number"
-                  className="border p-1 w-24 rounded"
-                  onChange={(e) =>
-                    updateSeatTypePrice("regular", Number(e.target.value))
+                  value={
+                    seatPrices.find((s) => s.type === type)?.price ?? 0
                   }
-                />
-              </div>
-              <div>
-                <label>Premium:</label>
-                <input
-                  type="number"
-                  className="border p-1 w-24 rounded"
                   onChange={(e) =>
-                    updateSeatTypePrice("premium", Number(e.target.value))
-                  }
+                      updateSeatTypePrice(type, e.target.value)
+                    }
+                  className="w-24"
                 />
-              </div>
-              <div>
-                <label>VIP:</label>
-                <input
-                  type="number"
-                  className="border p-1 w-24 rounded"
-                  onChange={(e) =>
-                    updateSeatTypePrice("premium", Number(e.target.value))
-                  }
-                />
-              </div>
-            </div>
-
-            <h3 className="mt-2 font-semibold">Seat Prices Preview</h3>
-            <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto border p-2 rounded">
-              {seatPrices.map((s) => (
-                <div
-                  key={s.seatId}
-                  className="flex justify-between items-center"
-                >
-                  <span>
-                    {s.seatId} ({s.type})
-                  </span>
-                  <input
-                    type="number"
-                    value={s.price}
-                    onChange={(e) => {
-                      const newPrices = seatPrices.map((sp) =>
-                        sp.seatId === s.seatId
-                          ? { ...sp, price: Number(e.target.value) }
-                          : sp
-                      );
-                      setSeatPrices(newPrices);
-                    }}
-                    className="border p-1 w-20 rounded"
-                  />
-                </div>
               ))}
             </div>
 
-            <div className="mt-4 flex justify-end space-x-2">
+            <h3 className="pt-3 my-3 font-semibold text-black border-t-1 border-gray-500">
+              Seat Prices Preview
+            </h3>
+            <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto border border-x-4 p-2 rounded-xl">
+              {seatPrices.map((s) => (
+                <InputField
+                  key={s.seatId}
+                  label={`${s.seatId} (${s.type})`}
+                  type="number"
+                  value={s.price ?? 0}
+                  onChange={(val) => {
+                    const newPrices = seatPrices.map((sp) =>
+                      sp.seatId === s.seatId
+                        ? { ...sp, price: Number(val) }
+                        : sp
+                    );
+                    setSeatPrices(newPrices);
+                  }}
+                  className="w-20"
+                />
+              ))}
+            </div>
+
+            <div className="mt-4 flex justify-end space-x-2 flex-wrap">
               <button
                 onClick={() => setEditShowtime(null)}
                 className="bg-gray-500 text-white px-3 py-1 rounded"

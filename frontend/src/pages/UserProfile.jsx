@@ -1,76 +1,117 @@
-import React, { useEffect } from "react";
-import { fetchProfile, logout } from "../features/auth/authSlice.js";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchProfile, updateProfile, logout } from "../features/auth/authSlice.js";
 import { useNavigate } from "react-router-dom";
+import { InputField } from "../components/InputFields.jsx";
 
-function UserProfile() {
-  const auth = useSelector((s) => s.auth);
+export default function UserProfile() {
+  const { user, loading } = useSelector((s) => s.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!auth.user) dispatch(fetchProfile());
-  }, [auth.user, dispatch]);
+  const [form, setForm] = useState({ name: "", email: "", phone: "" });
+  const [editMode, setEditMode] = useState(false);
 
-  if (!auth.user)
-    return (
-      <div className="flex items-center justify-center min-h-screen text-gray-500">
-        Loading profile...
-      </div>
-    );
+  useEffect(() => {
+    if (!user) dispatch(fetchProfile());
+    else setForm({ name: user.name, email: user.email, phone: user.phone || "" });
+  }, [user, dispatch]);
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSave = async () => {
+    await dispatch(updateProfile({ name: form.name, phone: form.phone }));
+    setEditMode(false); // disable fields again
+  };
 
   const handleLogout = () => {
     dispatch(logout());
+    navigate("/login");
   };
 
-  const goToAdminDashboard = () => {
-    navigate("/admin");
-  };
+  if (!user)
+    return <p className="text-center text-gray-500 mt-10">Loading profile...</p>;
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white shadow-xl rounded-2xl w-full max-w-md p-6 space-y-4">
-        {/* User Avatar & Name */}
-        <div className="flex flex-col items-center">
-          <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-3xl text-gray-500">
-            {auth.user.name?.charAt(0).toUpperCase() || "U"}
+    <div className="min-h-screen bg-gray-100 flex justify-center py-10 px-4">
+      <div className="bg-white border-red-500 border-x-4 rounded-2xl shadow-lg p-8 w-full max-w-md">
+        <h2 className="text-3xl font-bold text-center text-red-600 mb-6">
+          My Profile
+        </h2>
+
+        <div className="space-y-5">
+          <InputField
+            label="Full Name"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Enter your name"
+            type="text"
+            disabled={!editMode}
+          />
+
+          <InputField
+            label="Email"
+            name="email"
+            value={form.email}
+            placeholder="Email address"
+            type="email"
+            disabled
+          />
+
+          <InputField
+            label="Phone"
+            name="phone"
+            value={form.phone}
+            onChange={handleChange}
+            placeholder="Enter phone number"
+            type="text"
+            disabled={!editMode}
+          />
+
+          <div className="flex flex-col gap-3 justify-between mt-6">
+            {editMode ? (
+              <button
+                onClick={handleSave}
+                disabled={loading}
+                className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+              >
+                {loading ? "Saving..." : "Save"}
+              </button>
+            ) : (
+              <button
+                onClick={() => setEditMode(true)}
+                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+              >
+               Profile Edit
+              </button>
+            )}
+
+            <button
+              onClick={() => navigate("/my-bookings")}
+              className="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition"
+            >
+            My Bookings History
+            </button>
+
+            {user.role === "admin" && (
+              <button
+                onClick={() => navigate("/admin")}
+                className="flex-1 bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition"
+              >
+               Admin Dashboard
+              </button>
+            )}
+
+            <button
+              onClick={handleLogout}
+              className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+            >
+              Logout
+            </button>
           </div>
-          <h2 className="mt-3 text-2xl font-semibold text-gray-800">{auth.user.name}</h2>
-          <p className="text-gray-500 text-sm">{auth.user.email}</p>
         </div>
-
-        {/* User Info */}
-        <div className="border-t border-gray-200 pt-4 space-y-2">
-          <div className="flex justify-between">
-            <span className="font-medium text-gray-700">Phone</span>
-            <span className="text-gray-600">{auth.user.phone || "—"}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="font-medium text-gray-700">Role</span>
-            <span className="text-gray-600">{auth.user.role || "user"}</span>
-          </div>
-        </div>
-
-        {/* Admin Dashboard Button */}
-        {auth.user.role === "admin" && (
-          <button
-            onClick={goToAdminDashboard}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow transition-all hover:shadow-lg"
-          >
-            Go to Admin Dashboard
-          </button>
-        )}
-
-        {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="w-full py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl shadow transition-all hover:shadow-lg"
-        >
-          Logout
-        </button>
       </div>
     </div>
   );
 }
-
-export default UserProfile;

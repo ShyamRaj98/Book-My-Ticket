@@ -55,6 +55,7 @@ export const InputField = ({
   value,
   onChange,
   placeholder,
+  disabled = false,
   name,
 }) => (
   <div className="w-full">
@@ -69,6 +70,7 @@ export const InputField = ({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+        disabled={disabled}
         className="w-full outline-0 focus:border-red-500 focus:border-l-4 border border-gray-300 bg-white text-gray-900 p-3 rounded-lg transition-colors shadow-sm"
       />
     ) : (
@@ -78,6 +80,7 @@ export const InputField = ({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+        disabled={disabled}
         className="w-full outline-0 focus:border-red-500 focus:border-l-4 border border-gray-300 bg-white text-gray-900 p-3 rounded-lg transition-colors shadow-sm"
       />
     )}

@@ -25,6 +25,7 @@ import Header from "./components/Header.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
 import Footer from "./components/Footer.jsx";
 import RegisterAdmin from "./pages/RegisterAdmin.jsx";
+import MyBooking from "./pages/MyBooking.jsx";
 
 function AppContent() {
   const dispatch = useDispatch();
@@ -62,6 +63,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <UserProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-bookings"
+            element={
+              <ProtectedRoute>
+                <MyBooking />
               </ProtectedRoute>
             }
           />

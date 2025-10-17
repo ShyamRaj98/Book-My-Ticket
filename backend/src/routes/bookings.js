@@ -59,19 +59,14 @@ router.post("/hold", auth, async (req, res) => {
 
     // Ensure seats are available (not booked or held)
     for (const s of seatDocs) {
-      if (s.status === "booked" || s.status === "unavailable") {
-        throw new Error(`Seat ${s.seatId} is already booked or unavailable`);
-      }
-      if (s.status === "held" && s.holdUntil && s.holdUntil > now) {
-        throw new Error(`Seat ${s.seatId} is currently held by another user`);
-      }
-    }
-
-    // Mark seats as held
-    for (const s of seatDocs) {
+      if (["booked", "unavailable"].includes(s.status))
+        throw new Error(`Seat ${s.seatId} already booked`);
+      if (s.status === "held" && s.holdUntil > now)
+        throw new Error(`Seat ${s.seatId} currently held`);
       s.status = "held";
       s.holdUntil = holdUntil;
     }
+    
 
     // Calculate total amount
     const amount = seatDocs.reduce((acc, s) => acc + (s.price || 0), 0);
@@ -173,6 +168,68 @@ router.post("/:id/resend", requireAdmin, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to resend ticket" });
+  }
+});
+
+// ✅ Cancel booking
+router.post("/:id/cancel", auth, async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id)
+      .populate("showtime")
+      .populate("user");
+
+    if (!booking) return res.status(404).json({ error: "Booking not found" });
+    if (String(booking.user._id) !== String(req.user.id))
+      return res.status(403).json({ error: "Not authorized" });
+
+    const now = new Date();
+    if (booking.showtime.startTime <= now)
+      return res.status(400).json({ error: "Cannot cancel after showtime start" });
+
+    if (booking.status !== "paid")
+      return res.status(400).json({ error: "Only paid bookings can be canceled" });
+
+    // free up seats
+    const showtime = await Showtime.findById(booking.showtime._id);
+    showtime.seats.forEach((s) => {
+      if (booking.seats.some((bs) => bs.seatId === s.seatId)) {
+        s.status = "available";
+        s.holdUntil = null;
+      }
+    });
+
+    await showtime.save();
+    await Booking.findByIdAndDelete(booking._id);
+
+    res.json({ message: "Booking canceled successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to cancel booking" });
+  }
+});
+
+// ✅ Download ticket as PDF
+router.get("/:id/download", auth, async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id)
+      .populate("user")
+      .populate({ path: "showtime", populate: ["movie", "theater"] });
+    if (!booking) return res.status(404).json({ error: "Booking not found" });
+    if (String(booking.user._id) !== String(req.user.id))
+      return res.status(403).json({ error: "Not your booking" });
+    if (booking.status !== "paid")
+      return res.status(400).json({ error: "Payment not completed" });
+
+    const pdfBuffer = await generateTicketPDF(booking);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=ticket-${booking._id}.pdf`
+    );
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error("download error", err);
+    res.status(500).json({ error: "Failed to download ticket" });
   }
 });
 

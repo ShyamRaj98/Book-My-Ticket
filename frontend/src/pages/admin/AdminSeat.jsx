@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { InputField, SelectInput } from "../../components/InputFields.jsx";
+import { MdEventSeat } from "react-icons/md";
 
 export default function AdminSeat() {
   const [layouts, setLayouts] = useState([]);
@@ -12,10 +13,10 @@ export default function AdminSeat() {
   const [selectedSeat, setSelectedSeat] = useState(null);
 
   const seatColors = {
-    regular: "bg-green-200",
-    premium: "bg-blue-200",
-    vip: "bg-purple-200",
-    unavailable: "bg-gray-300",
+    regular: "text-green-500",
+    premium: "text-blue-500",
+    vip: "text-purple-500",
+    unavailable: "text-gray-500",
   };
 
   useEffect(() => {
@@ -117,11 +118,11 @@ export default function AdminSeat() {
   return (
     <div className="p-6 space-y-10 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold text-gray-800 border-b pb-3">
-        🎭 Seat Layout Editor
+        Seat Layout Editor
       </h1>
 
       {/* Controls Section */}
-      <div className="bg-white p-3 md:p-6 rounded-xl shadow-lg grid lg:grid-cols-3 md:grid-cols-2 gap-5">
+      <div className="bg-white border-red-500 border border-x-4 p-3 md:p-6 rounded-xl shadow-lg grid lg:grid-cols-3 md:grid-cols-2 gap-5">
         <InputField
           label="Layout Name"
           value={layoutName}
@@ -142,7 +143,7 @@ export default function AdminSeat() {
         />
         <button
           onClick={() => generateLayout(rows, cols)}
-          className="self-end bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+          className="self-end bg-black text-white px-4 py-2 rounded-lg hover:bg-red-500 transition"
         >
           Generate
         </button>
@@ -155,7 +156,7 @@ export default function AdminSeat() {
       </div>
 
       {/* Seat Grid */}
-      <div className="overflow-auto border rounded-xl bg-white p-3 md:p-6 shadow-md">
+      <div className="overflow-auto border-red-500 border border-x-4 rounded-xl bg-white p-3 md:p-6 shadow-md">
         <div
           className="grid gap-2 justify-center"
           style={{
@@ -167,11 +168,12 @@ export default function AdminSeat() {
             <div
               key={s.seatId}
               onClick={() => handleSeatClick(i)}
-              className={`flex items-center justify-center border rounded text-xs font-semibold cursor-pointer transition-all hover:scale-105 ${
+              className={`flex flex-col items-center justify-center border rounded text-xs font-semibold cursor-pointer transition-all hover:scale-105 ${
                 seatColors[s.type]
               }`}
               title={`${s.seatId} • ${s.type} • ₹${s.price}`}
             >
+            <MdEventSeat className={`text-2xl ${seatColors[s.type]}`} />
               {s.row}
               {s.number}
             </div>
@@ -181,7 +183,7 @@ export default function AdminSeat() {
 
       {/* Seat Edit Modal */}
       {selectedSeat && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <div className="w-screen h-screen fixed inset-0 bg-black bg-opacity-25 flex items-center justify-center z-50">
           <div className="bg-white w-96 p-6 rounded-lg shadow-2xl space-y-5 relative">
             <h2 className="text-xl font-semibold text-gray-800 mb-2">
               Edit Seat — {selectedSeat.seatId}
@@ -222,9 +224,9 @@ export default function AdminSeat() {
       )}
 
       {/* Saved Layouts */}
-      <div className="bg-white p-6 rounded-xl shadow-lg">
+      <div className="bg-white p-6 border-red-500 border border-x-4 rounded-xl shadow-lg">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
-          💾 Saved Layouts
+          Saved Layouts
         </h2>
         {layouts.length === 0 ? (
           <p className="text-gray-500 italic">No saved layouts yet.</p>
@@ -233,7 +235,7 @@ export default function AdminSeat() {
             {layouts.map((l) => (
               <li
                 key={l._id}
-                className="flex justify-between items-center border p-3 rounded-lg hover:bg-gray-50 transition"
+                className="flex justify-between items-center border-red-500 border border-x-4 p-3 rounded-lg hover:bg-gray-50 transition"
               >
                 <div>
                   <div className="font-medium text-gray-700">{l.name}</div>

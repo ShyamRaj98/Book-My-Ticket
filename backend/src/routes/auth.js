@@ -102,6 +102,22 @@ router.get("/profile", auth, async (req, res) => {
   }
 });
 
+// Update profile
+router.put("/profile", auth, async (req, res) => {
+  try {
+    const { name, phone } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { name, phone },
+      { new: true }
+    ).select("-password");
+    res.json(updatedUser);
+  } catch (err) {
+    console.error("Profile update error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 /**
  * GET /api/auth/bookings
  * protected -> returns booking history for the logged-in user
