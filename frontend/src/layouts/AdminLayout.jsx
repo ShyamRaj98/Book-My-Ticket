@@ -10,6 +10,7 @@ import {
   BarChart3,
   Layout,
   LogOut,
+  Users
 } from "lucide-react";
 
 export default function AdminLayout() {
@@ -36,6 +37,7 @@ export default function AdminLayout() {
     },
     { path: "/admin/showtimes", label: "Showtimes", icon: <Clock size={22} /> },
     { path: "/admin/reports", label: "Reports", icon: <BarChart3 size={22} /> },
+    { path: "/admin/all-users", label: "Users", icon: <Users size={22} /> },
   ];
 
   const SidebarContent = () => (

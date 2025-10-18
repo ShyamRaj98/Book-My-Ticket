@@ -26,6 +26,7 @@ import UserProfile from "./pages/UserProfile.jsx";
 import Footer from "./components/Footer.jsx";
 import RegisterAdmin from "./pages/RegisterAdmin.jsx";
 import MyBooking from "./pages/MyBooking.jsx";
+import AdminUsers from "./pages/admin/AdminUsers.jsx";
 
 function AppContent() {
   const dispatch = useDispatch();
@@ -111,6 +112,7 @@ function AppContent() {
             <Route path="showtimes" element={<AdminShowtimes />} />
             <Route path="screen-edit" element={<AdminScreenEditor />} />
             <Route path="reports" element={<AdminReports />} />
+            <Route path="all-users" element={<AdminUsers />} />
           </Route>
         </Routes>
       </main>

@@ -67,7 +67,7 @@ export const InputField = ({
     {type === "textarea" ? (
       <textarea
         name={name}
-        value={value}
+        value={value ?? ""}
         onChange={onChange}
         placeholder={placeholder}
         disabled={disabled}
@@ -77,7 +77,7 @@ export const InputField = ({
       <input
         name={name}
         type={type}
-        value={value}
+        value={value ?? ""}
         onChange={onChange}
         placeholder={placeholder}
         disabled={disabled}

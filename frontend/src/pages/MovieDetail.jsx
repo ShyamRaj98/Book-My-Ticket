@@ -152,7 +152,8 @@ export default function MovieDetail() {
       </div>
       <div className="border-t-2 border-red-700 py-4 flex flex-col justify-center items-center">
         {/* Date Selector */}
-        <div className="w-full flex gap-2 mb-6 overflow-x-scroll pb-2">
+        <div className="overflow-x-scroll md:overflow-auto w-screen mb-6 px-4">
+        <div className="w-full flex justify-start md:justify-center gap-2 mb-6 pb-2">
           {next7Days.map((date) => (
             <button
               key={date.toISOString()}
@@ -163,10 +164,11 @@ export default function MovieDetail() {
                   : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
               }`}
             >
-              <div className="text-sm font-semibold">{format(date, "EEE")}</div>
-              <div className="text-xs">{format(date, "dd MMM")}</div>
+              <div className="text-sm font-semibold ">{format(date, "EEE")}</div>
+              <div className="text-xs text-nowrap">{format(date, "dd MMM")}</div>
             </button>
           ))}
+        </div>
         </div>
 
         {/* Showtimes */}

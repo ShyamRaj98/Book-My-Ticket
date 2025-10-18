@@ -7,6 +7,7 @@ import connectDB from "./src/config/db.js";
 import moviesRoute from "./src/routes/public/movies.js";
 import showtimesRoute from "./src/routes/public/showtimes.js";
 import adminRoute from "./src/routes/admin/admin.js";
+import adminUsersRoutes from "./src/routes/admin/adminUsers.js";
 import authRoute from "./src/routes/auth.js";
 import bookingsRoute from "./src/routes/bookings.js";
 import paymentsRoute from "./src/routes/payments.js";
@@ -47,6 +48,7 @@ app.use("/api/showtimes", showtimesRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/admin", adminSeatLayouts);
+app.use("/api/admin/users", adminUsersRoutes);
 app.use("/api/admin/showtimes", adminShowtimeRoute);
 app.use("/api/bookings", bookingsRoute);
 // after app.use(express.json()) and mounting API routes
