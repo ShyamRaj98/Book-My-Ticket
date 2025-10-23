@@ -59,7 +59,12 @@ export default function AdminShowtimes() {
   // ✅ Create showtime
   async function createShowtime(e) {
     e.preventDefault();
-    if (!form.movieId || !form.theaterId || !form.screenName || !form.startTime) {
+    if (
+      !form.movieId ||
+      !form.theaterId ||
+      !form.screenName ||
+      !form.startTime
+    ) {
       alert("Please fill all fields before creating a showtime");
       return;
     }
@@ -137,87 +142,90 @@ export default function AdminShowtimes() {
 
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold mb-4">🎬 Showtime Management</h1>
+      <h1 className="text-2xl font-bold mb-4">Showtime Management</h1>
 
       {/* Create Showtime Form */}
       <form
         onSubmit={createShowtime}
-        className="grid grid-cols-1 md:grid-cols-4 gap-3"
+        className="flex flex-col items-center bg-white p-4 rounded-xl shadow-md space-y-4 border-red-500 border-x-4"
       >
-        <SelectInput
-          label="Movie"
-          options={movies.map((m) => ({ value: m._id, label: m.title }))}
-          value={form.movieId}
-          onChange={(val) => setForm((f) => ({ ...f, movieId: val }))}
-        />
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3">
+          <SelectInput
+            label="Movie"
+            options={movies.map((m) => ({ value: m._id, label: m.title }))}
+            value={form.movieId}
+            onChange={(val) => setForm((f) => ({ ...f, movieId: val }))}
+          />
 
-        <SelectInput
-          label="Theater"
-          options={theaters.map((t) => ({ value: t._id, label: t.name }))}
-          value={form.theaterId}
-          onChange={(val) => setForm((f) => ({ ...f, theaterId: val }))}
-        />
+          <SelectInput
+            label="Theater"
+            options={theaters.map((t) => ({ value: t._id, label: t.name }))}
+            value={form.theaterId}
+            onChange={(val) => setForm((f) => ({ ...f, theaterId: val }))}
+          />
 
-        <SelectInput
-          label="Screen"
-          options={screenOptions.map((s) => ({
-            value: s.name,
-            label: `${s.name} (${s.seats?.length || 0} seats)`,
-          }))}
-          value={form.screenName}
-          onChange={(val) => setForm((f) => ({ ...f, screenName: val }))}
-        />
+          <SelectInput
+            label="Screen"
+            options={screenOptions.map((s) => ({
+              value: s.name,
+              label: `${s.name} (${s.seats?.length || 0} seats)`,
+            }))}
+            value={form.screenName}
+            onChange={(val) => setForm((f) => ({ ...f, screenName: val }))}
+          />
 
-        <InputField
-          label="Start Time"
-          type="datetime-local"
-          value={form.startTime}
-          onChange={(e) => setForm((f) => ({ ...f, startTime: e.target.value }))}
-        />
+          <InputField
+            label="Start Time"
+            type="datetime-local"
+            value={form.startTime}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, startTime: e.target.value }))
+            }
+          />
 
-        <SelectInput
-          label="Language"
-          options={[
-            { value: "English", label: "English" },
-            { value: "Hindi", label: "Hindi" },
-            { value: "Tamil", label: "Tamil" },
-          ]}
-          value={form.language}
-          onChange={(val) => setForm((f) => ({ ...f, language: val }))}
-        />
+          <SelectInput
+            label="Language"
+            options={[
+              { value: "English", label: "English" },
+              { value: "Hindi", label: "Hindi" },
+              { value: "Tamil", label: "Tamil" },
+            ]}
+            value={form.language}
+            onChange={(val) => setForm((f) => ({ ...f, language: val }))}
+          />
 
-        <SelectInput
-          label="Format"
-          options={[
-            { value: "2D", label: "2D" },
-            { value: "3D", label: "3D" },
-            { value: "IMAX", label: "IMAX" },
-          ]}
-          value={form.format}
-          onChange={(val) => setForm((f) => ({ ...f, format: val }))}
-        />
-
-        <button className="bg-green-600 text-white px-4 py-2 rounded mt-6 md:mt-auto col-span-full md:col-auto">
+          <SelectInput
+            label="Format"
+            options={[
+              { value: "2D", label: "2D" },
+              { value: "3D", label: "3D" },
+              { value: "IMAX", label: "IMAX" },
+            ]}
+            value={form.format}
+            onChange={(val) => setForm((f) => ({ ...f, format: val }))}
+          />
+        </div>
+        <button className="w-fit bg-green-600 text-white font-semibold text-lg px-4 py-3 rounded mt-6 mb-4 col-span-full md:col-auto">
           Create Showtime
         </button>
       </form>
-
       {/* Showtime List */}
       <div className="space-y-3">
+        <h1 className="text-xl font-bold mb-4">Showtime List</h1>
         {showtimes.map((st) => (
           <div
             key={st._id}
-            className="flex justify-between items-center border p-3 rounded"
+            className="bg-white flex flex-col md:flex-row justify-between items-center border border-red-500 border-x-4 p-3 rounded-xl"
           >
             <div>
-              <div className="font-semibold">{st.movie?.title || "—"}</div>
-              <div className="text-sm text-gray-500">
+              <div className="text-lg font-semibold text-red-500">{st.movie?.title || "—"}</div>
+              <div className="text-sm text-gray-500 font-semibold">
                 {new Date(st.startTime).toLocaleString()} —{" "}
                 {st.theater?.name || "—"} — {st.screenName} — {st.language} —{" "}
                 {st.format}
               </div>
             </div>
-            <div className="space-x-2">
+            <div className="flex flex-nowrap mt-4 md:mt-0 space-x-2">
               <button
                 onClick={() => openEditModal(st)}
                 className="bg-blue-500 text-white px-3 py-1 rounded"

@@ -1,4 +1,3 @@
-// client/src/pages/BookingSuccess.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../api/axios.js";
@@ -9,11 +8,10 @@ import {
   Text,
   View,
   StyleSheet,
-  Image,
 } from "@react-pdf/renderer";
 import QRCode from "react-qr-code";
 
-// PDF Styles
+// =================== PDF Styles ===================
 const pdfStyles = StyleSheet.create({
   page: {
     padding: 30,
@@ -38,6 +36,7 @@ const pdfStyles = StyleSheet.create({
   footer: { fontSize: 10, textAlign: "center", marginTop: 20, color: "#555" },
 });
 
+// =================== PDF Ticket Document ===================
 const TicketDocument = ({ booking }) => {
   const seatsList = booking.seats.map((s) => s.seatId || s.label).join(", ");
   const qrValue = `Booking:${booking._id}|Movie:${booking.showtime.movie.title}|Seats:${seatsList}`;
@@ -92,47 +91,68 @@ const TicketDocument = ({ booking }) => {
   );
 };
 
+// =================== Booking Success Component ===================
 export default function BookingSuccess() {
   const { bookingId } = useParams();
   const [booking, setBooking] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Poll backend if payment is pending
+  // ✅ Poll backend until payment confirmed
   useEffect(() => {
     let interval;
+
     async function fetchBooking() {
       try {
         const res = await api.get(`/bookings/${bookingId}`);
-        setBooking(res.data.booking);
+        const data = res.data.booking;
+        setBooking(data);
+        setLoading(false);
+
+        // ✅ Stop polling when payment confirmed
+        if (data.status === "paid" && interval) {
+          clearInterval(interval);
+        }
       } catch (err) {
-        console.error(err);
+        console.error("Booking fetch failed:", err);
+        setLoading(false);
         navigate("/");
       }
     }
-    if (bookingId) fetchBooking();
 
-    interval = setInterval(() => {
-      if (booking && booking.status === "pending") fetchBooking();
-    }, 5000);
+    if (bookingId) {
+      fetchBooking();
+      interval = setInterval(fetchBooking, 5000);
+    }
 
     return () => clearInterval(interval);
-  }, [bookingId, booking, navigate]);
+  }, [bookingId, navigate]);
 
-  if (!booking)
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen text-gray-500">
         Loading booking details...
       </div>
     );
+  }
+
+  if (!booking) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-red-500">
+        Booking not found.
+      </div>
+    );
+  }
 
   const statusColor =
     booking.status === "paid" ? "text-green-700" : "text-yellow-600";
 
+  // =================== UI ===================
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-100 py-10 px-4">
       {/* Ticket Card */}
-      <div className="bg-gradient-to-r from-yellow-100 via-yellow-50 to-yellow-100 shadow-2xl rounded-2xl w-full max-w-md p-6 relative border-t-4 border-yellow-400">
-        <h1 className="text-3xl font-bold text-yellow-800 mb-2 text-center">
+      <div className="bg-gradient-to-r from-red-100 via-red-50 to-red-100 shadow-2xl rounded-2xl w-full max-w-md p-6 relative border-t-4 border-red-400">
+        <h1 className="text-3xl font-bold text-red-800 mb-2 text-center">
           🎬 BookMyTicket
         </h1>
         <p className="text-gray-600 text-sm text-center mb-4">
@@ -193,7 +213,7 @@ export default function BookingSuccess() {
           <PDFDownloadLink
             document={<TicketDocument booking={booking} />}
             fileName={`BookMyTicket_${booking._id}.pdf`}
-            className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-md font-semibold transition"
+            className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-md font-semibold transition cursor-pointer"
           >
             {({ loading }) =>
               loading ? "Generating PDF..." : "Download Ticket (PDF)"
@@ -202,7 +222,7 @@ export default function BookingSuccess() {
         </div>
       </div>
 
-      <Link to="/" className="mt-6 text-yellow-800 hover:underline font-medium">
+      <Link to="/" className="mt-6 text-red-800 hover:underline font-medium">
         ← Back to Home
       </Link>
     </div>

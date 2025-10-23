@@ -1,7 +1,7 @@
 // src/pages/AdminScreen.jsx
 import React, { useEffect, useState } from "react";
 import api from "../../api/axios.js";
-import {SelectInput} from "../../components/InputFields.jsx";
+import {SelectInput, TypeSelectInput} from "../../components/InputFields.jsx";
 
 export default function AdminScreen() {
   const [theaters, setTheaters] = useState([]);
@@ -103,7 +103,7 @@ export default function AdminScreen() {
         />
 
         {/* Screen Name Select */}
-        <SelectInput
+        <TypeSelectInput
           label="Select Screen Name"
           value={form.screenName}
           onChange={(val) => setForm({ ...form, screenName: val })}

@@ -31,13 +31,7 @@ export function MovieCarousel({ movies }) {
       >
         {movies.map((movie) => (
           <SwiperSlide key={movie.id} className="my-2">
-            <Link
-              to={
-                `https://boookmyticket.netlify.app${movie.link}` ||
-                `http://localhost:5173${movie.link}` ||
-                "#"
-              }
-            >
+            <Link to={movie.link || "#"}>
               <div className="h-full rounded-xl shadow transition overflow-hidden">
                 <div className="h-full overflow-hidden">
                   <img

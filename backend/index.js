@@ -16,6 +16,7 @@ import adminReportRoutes from "./src/routes/admin/adminReportRoutes.js";
 import { generateDailyReport } from "./src/utils/generateDailyReport.js";
 import adminSeatLayouts from "./src/routes/admin/adminSeatLayoutRoutes.js";
 import adminShowtimeRoute from "./src/routes/admin/AdminShowtimeRoutes.js";
+// import adminAuthRoutes from "./src/routes/admin/adminAuth.js";
 
 dotenv.config();
 const app = express();

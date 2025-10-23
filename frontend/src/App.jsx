@@ -27,6 +27,10 @@ import Footer from "./components/Footer.jsx";
 import RegisterAdmin from "./pages/RegisterAdmin.jsx";
 import MyBooking from "./pages/MyBooking.jsx";
 import AdminUsers from "./pages/admin/AdminUsers.jsx";
+import AdminLogin from "./pages/AdminLogin.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
+import PasswordSuccess from "./pages/PasswordSuccess.jsx";
 
 function AppContent() {
   const dispatch = useDispatch();
@@ -41,7 +45,7 @@ function AppContent() {
   }, [auth.token, auth.user, dispatch]);
 
   // Check if current route is admin
-  const isAdminRoute = ["/admin", "/register-admin", "/login", "/register"].find((path) => location.pathname.startsWith(path));
+  const isAdminRoute = ["/admin", "/register-admin", "/login-admin", "/login", "/register"].find((path) => location.pathname.startsWith(path));
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
@@ -51,7 +55,11 @@ function AppContent() {
         <Routes>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/login-admin" element={<AdminLogin />} />
           <Route path="/register-admin" element={<RegisterAdmin />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/password-success" element={<PasswordSuccess />} />
           <Route path="/" element={<Home />} />
           <Route path="/movies" element={<MovieSearch />} />
           <Route path="/movies/:id" element={<MovieDetail />} />

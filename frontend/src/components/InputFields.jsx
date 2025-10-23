@@ -191,4 +191,99 @@ export const SelectInput = ({
   );
 };
 
-export default { InputField, PasswordField, DateInput, SelectInput };
+export const TypeSelectInput = ({
+  label,
+  options = [],
+  value,
+  onChange,
+  placeholder = "Select or type...",
+  name,
+}) => {
+  const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState(value || "");
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    setInputValue(value || "");
+  }, [value]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Filter options based on what user types
+  const filteredOptions = options.filter((opt) =>
+    opt.label.toLowerCase().includes(inputValue.toLowerCase())
+  );
+
+  const handleSelect = (val) => {
+    onChange(val);
+    setInputValue(val);
+    setOpen(false);
+  };
+
+  return (
+    <div className="w-full relative" ref={dropdownRef}>
+      {label && (
+        <h3 className="block text-gray-800 text-md md:text-lg font-semibold mb-2">
+          {label}
+        </h3>
+      )}
+
+      <div className="relative">
+        <input
+          type="text"
+          value={inputValue}
+          name={name}
+          placeholder={placeholder}
+          onChange={(e) => {
+            setInputValue(e.target.value);
+            onChange(e.target.value); // Allow custom typed values
+            setOpen(true); // open dropdown while typing
+          }}
+          onClick={() => setOpen((prev) => !prev)}
+          className="w-full border border-gray-300 focus:border-red-500 bg-white text-gray-900 p-3 rounded-lg shadow-sm outline-none"
+        />
+        <svg
+          className={`absolute right-3 top-4 w-4 h-4 transform transition-transform ${
+            open ? "rotate-180" : ""
+          }`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M19 9l-7 7-7-7"
+          />
+        </svg>
+      </div>
+
+      {open && filteredOptions.length > 0 && (
+        <ul className="absolute z-10 w-full mt-1 max-h-48 overflow-auto rounded-md border border-gray-300 bg-white shadow-lg">
+          {filteredOptions.map((opt) => (
+            <li
+              key={opt.value}
+              onClick={() => handleSelect(opt.value)}
+              className={`px-3 py-2 cursor-pointer hover:bg-red-100 ${
+                opt.value === value ? "bg-red-200" : ""
+              } transition-colors`}
+            >
+              {opt.label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+export default { InputField, PasswordField, DateInput, SelectInput, TypeSelectInput };

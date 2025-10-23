@@ -1,45 +1,25 @@
 import express from "express";
-import User from "../../models/User.js";
+import { auth as authMiddleware } from "../../middlewares/auth.js";
 import { requireAdmin } from "../../middlewares/admin.js";
+import {
+  getAllUsers,
+  updateUserRolesBulk,
+  deleteUser,
+} from "../../controllers/adminUserController.js";
 
 const router = express.Router();
 
+// Protect admin routes
+router.use(authMiddleware);
 router.use(requireAdmin);
 
 // GET all users
-router.get("/", async (req, res) => {
-  try {
-    const users = await User.find().select("-password"); // exclude password
-    res.json({ users });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
+router.get("/", getAllUsers);
 
-// PATCH update roles in bulk
-router.patch("/roles", async (req, res) => {
-  try {
-    const updates = req.body; // [{ userId, role }]
-    for (let u of updates) {
-      await User.findByIdAndUpdate(u.userId, { role: u.role });
-    }
-    res.json({ message: "Roles updated" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
+// PATCH update user roles in bulk
+router.patch("/roles", updateUserRolesBulk);
 
-// DELETE user
-router.delete("/:id", async (req, res) => {
-  try {
-    await User.findByIdAndDelete(req.params.id);
-    res.json({ message: "User deleted" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
+// DELETE a specific user
+router.delete("/:id", deleteUser);
 
 export default router;

@@ -1,18 +1,13 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { register } from "../features/auth/authSlice.js";
-import { useNavigate } from "react-router-dom";
-import {
-  InputField,
-  PasswordField,
-} from "../components/InputFields.jsx"; 
+import { register } from "../features/auth/authSlice";
+import { InputField, PasswordField } from "../components/InputFields.jsx";
+import { Link } from "react-router-dom";
 
-export default function RegisterAdmin() {
+const AdminRegister = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { loading, error } = useSelector((s) => s.auth);
-
-  const [form, setForm] = useState({
+  const { loading, error } = useSelector((state) => state.auth);
+  const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
@@ -20,95 +15,84 @@ export default function RegisterAdmin() {
     secretKey: "",
   });
 
-  const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
-  const onSubmit = async (e) => {
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (form.secretKey !== "ADMIN123") {
-      alert("❌ Invalid secret key!");
-      return;
-    }
-
-    const result = await dispatch(register({ ...form, role: "admin" }));
-    if (result.meta.requestStatus === "fulfilled") {
-      navigate("/login");
-    }
+    const result = await dispatch(register({ ...formData, role: "admin" }));
+    console.log(result);
+    if (result.meta.requestStatus === "fulfilled") navigate("/login");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-lg bg-white border border-gray-200 rounded-2xl shadow-xl p-10">
-        <h2 className="text-3xl font-extrabold text-center text-red-600 mb-6 tracking-wide">
-          Admin Registration
+    <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white border border-red-500 border-y-4 shadow-xl rounded-2xl p-8 w-full max-w-md"
+      >
+        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
+          Admin Register
         </h2>
 
-        <form onSubmit={onSubmit} className="space-y-5">
+        <InputField
+          label="Full Name"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+        />
+        <div className="mt-2">
           <InputField
-            label="Full Name"
-            name="name"
-            type="text"
-            placeholder="Enter full name"
-            value={form.name}
-            onChange={onChange}
-          />
-
-          <InputField
-            label="Email Address"
+            label="Email"
             name="email"
             type="email"
-            placeholder="Enter email"
-            value={form.email}
-            onChange={onChange}
+            value={formData.email}
+            onChange={handleChange}
           />
-
-          <InputField
-            label="Phone Number"
-            name="phone"
-            type="tel"
-            placeholder="Enter phone number"
-            value={form.phone}
-            onChange={onChange}
-          />
-
+        </div>
+        <div className="mt-2">
           <PasswordField
             label="Password"
             name="password"
-            placeholder="Enter password"
-            value={form.password}
-            onChange={onChange}
+            value={formData.password}
+            onChange={handleChange}
           />
-
-          <PasswordField
-            label="Secret Key (Admin Access)"
+        </div>
+        <div className="mt-2">
+          <InputField
+            label="Admin Secret Code"
             name="secretKey"
-            placeholder="Enter admin secret key"
-            value={form.secretKey}
-            onChange={onChange}
+            value={formData.secretKey}
+            onChange={handleChange}
           />
+        </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-red-600 text-white text-lg font-semibold rounded-lg shadow hover:bg-red-700 transition disabled:opacity-70"
-          >
-            {loading ? "Registering..." : "Register Admin"}
-          </button>
-
+        <div className="h-[30px] mt-2">
           {error && (
-            <p className="text-center text-red-500 mt-2 font-medium">{error}</p>
+            <p className="bg-red-200 my-1 p-1 border-red-500 text-red-500 text-sm font-semibold text-center rounded-lg">
+              {error}
+            </p>
           )}
-        </form>
+        </div>
 
-        <p className="text-center mt-6 text-gray-700">
-          Already have an account?{" "}
-          <span
-            className="text-red-600 cursor-pointer hover:underline font-semibold"
-            onClick={() => navigate("/login")}
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full mt-2 mb-3 bg-red-500 text-white py-2 rounded-lg font-semibold hover:bg-red-600 transition"
+        >
+          {loading ? "Registering..." : "Register as Admin"}
+        </button>
+        <div className="flex flex-col items-center text-center mt-2 text-sm text-gray-600">
+          <Link
+            to="/login"
+            className="font-semibold text-lg hover:underline"
           >
-            Login
-          </span>
-        </p>
-      </div>
+            Already have an account?{" "}
+            <span className="text-red-500">Login</span>
+          </Link>
+        </div>
+      </form>
     </div>
   );
-}
+};
+
+export default AdminRegister;
