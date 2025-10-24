@@ -15,15 +15,21 @@ const createToken = (user) =>
 export const registerAdmin = async (req, res) => {
   try {
     const { name, email, password, phone, secretKey } = req.body;
-    if (!name || !email || !password || !secretKey)
-      return res.status(400).json({ success: false, error: "All fields required" });
+    if (!name || !email || !password || !phone || !secretKey)
+      return res
+        .status(400)
+        .json({ success: false, error: "All fields required" });
 
     if (secretKey !== process.env.ADMIN_SECRET_KEY)
-      return res.status(403).json({ success: false, error: "Invalid secret key" });
+      return res
+        .status(403)
+        .json({ success: false, error: "Invalid secret key" });
 
     const exists = await User.findOne({ email });
     if (exists)
-      return res.status(409).json({ success: false, error: "Email already registered" });
+      return res
+        .status(409)
+        .json({ success: false, error: "Email already registered" });
 
     const salt = await bcrypt.genSalt(Number(process.env.JWT_SALT_ROUNDS));
     const hashed = await bcrypt.hash(password, salt);
@@ -40,11 +46,19 @@ export const registerAdmin = async (req, res) => {
     res.json({
       success: true,
       message: "Admin registered successfully",
-      user: { id: admin._id, name: admin.name, email: admin.email, role: admin.role },
+      user: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email,
+        role: admin.role,
+      },
       token,
     });
   } catch (err) {
-    res.status(500).json({ success: false, message: "Failed to register admin" });
+    console.error("🔥 Admin register error:", err.message);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to register admin" });
   }
 };
 
@@ -54,17 +68,25 @@ export const loginAdmin = async (req, res) => {
     const { email, password } = req.body;
     const admin = await User.findOne({ email, role: "admin" });
     if (!admin)
-      return res.status(401).json({ success: false, error: "Invalid admin credentials" });
+      return res
+        .status(401)
+        .json({ success: false, error: "Invalid admin credentials" });
 
     const match = await bcrypt.compare(password, admin.password);
     if (!match)
-      return res.status(401).json({ success: false, error: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ success: false, error: "Invalid credentials" });
 
-    
     const token = createToken(admin);
     res.json({
       success: true,
-      user: { id: admin._id, name: admin.name, email: admin.email, role: admin.role },
+      user: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email,
+        role: admin.role,
+      },
       token,
     });
   } catch (err) {

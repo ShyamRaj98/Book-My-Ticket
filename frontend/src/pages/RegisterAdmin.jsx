@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { register } from "../features/auth/authSlice";
 import { InputField, PasswordField } from "../components/InputFields.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const AdminRegister = () => {
   const dispatch = useDispatch();
@@ -14,7 +14,7 @@ const AdminRegister = () => {
     password: "",
     secretKey: "",
   });
-
+  const navigate = useNavigate();
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
   const handleSubmit = async (e) => {
@@ -46,6 +46,15 @@ const AdminRegister = () => {
             name="email"
             type="email"
             value={formData.email}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="mt-2">
+          <InputField
+            label="Phone Number"
+            name="phone"
+            type="text"
+            value={formData.phone}
             onChange={handleChange}
           />
         </div>
@@ -82,12 +91,8 @@ const AdminRegister = () => {
           {loading ? "Registering..." : "Register as Admin"}
         </button>
         <div className="flex flex-col items-center text-center mt-2 text-sm text-gray-600">
-          <Link
-            to="/login"
-            className="font-semibold text-lg hover:underline"
-          >
-            Already have an account?{" "}
-            <span className="text-red-500">Login</span>
+          <Link to="/login" className="font-semibold text-lg hover:underline">
+            Already have an account? <span className="text-red-500">Login</span>
           </Link>
         </div>
       </form>
