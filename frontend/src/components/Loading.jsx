@@ -1,5 +1,5 @@
-import loaderVideo from "../../src/assets/video/loading.mp4";
-import loaderVideo2 from "../../src/assets/video/loading2.mp4";
+import loaderVideo from "../../public/assets/video/loading.mp4";
+import loaderVideo2 from "../../public/assets/video/loading2.mp4";
 
 const Loading = ({ text = "Loading...", loader = "page" }) => {
   return (
