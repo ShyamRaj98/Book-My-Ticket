@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { format, addDays, isSameDay, parseISO } from "date-fns";
 import { FaChevronLeft } from "react-icons/fa6";
 import api from "../api/axios.js";
+import Loading from "../components/Loading.jsx";
 
 export default function MovieDetail() {
   const { id } = useParams();
@@ -103,7 +104,7 @@ export default function MovieDetail() {
     return acc;
   }, {});
 
-  if (loading) return <div className="p-6 text-gray-600">Loading movie...</div>;
+  if (loading) return <Loading text="Loading movie..." loader="page" />;
   if (!movie) return <div className="p-6 text-red-600">Movie not found</div>;
 
   // Create next 7 days for date selection
