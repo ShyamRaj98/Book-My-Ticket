@@ -86,7 +86,7 @@ export default function MovieSearch() {
       {/* 🔍 Search + Filters */}
       <form
         onSubmit={doSearch}
-        className="max-w-5xl mx-auto p-4 border-2 border-red-700 rounded-2xl bg-white shadow-md flex flex-col md:flex-row flex-wrap items-center justify-center gap-3 shadow-2xl"
+        className="max-w-5xl mx-auto p-4 border-2 border-red-700 rounded-2xl bg-white flex flex-col md:flex-row flex-wrap items-center justify-center gap-3 shadow-2xl"
       >
         {/* Search */}
         <input
