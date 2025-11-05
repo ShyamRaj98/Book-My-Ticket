@@ -34,7 +34,7 @@ A full-stack **MERN** application for managing movies, showtimes, bookings, and 
 | Database | MongoDB + Mongoose |
 | Authentication | JWT (JSON Web Token) |
 | Payments | Stripe API |
-| Charts | Recharts |
+| Charts | Charts.js |
 | Reports | MongoDB Aggregation + Mongoose Models |
 
 ---
