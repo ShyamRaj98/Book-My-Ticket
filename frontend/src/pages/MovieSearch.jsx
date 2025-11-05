@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../api/axios.js";
 import { IoSearch } from "react-icons/io5";
 import MovieCard from "../components/MovieCard.jsx";
+import Loading from "../components/Loading.jsx";
 
 export default function MovieSearch() {
   const [q, setQ] = useState("");

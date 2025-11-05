@@ -1,29 +1,26 @@
-import loaderVideo from "../assets/video/loading.mp4";
-import loaderVideo2 from "../assets/video/loading2.mp4";
+import loaderpage from "../assets/images/Video_Camera.gif";
+import loader_img from "../assets/images/loader_film.png";
 
 const Loading = ({ text = "Loading...", loader = "page" }) => {
   return (
     <>
       {loader === "page" ? (
         <div className="w-full max-h-[95vh] flex flex-col items-center justify-center py-10 rounded-2xl overflow-hidden">
-          <video
-            src={loaderVideo2}
-            autoPlay
-            loop
-            muted
-            className="w-24 h-24 rounded-lg"
-          />
+          <img src={loaderpage} className="w-[250px] h-[250px] rounded-full" />
           <p className="mt-3 text-gray-700 font-medium">{text}</p>
         </div>
       ) : (
         <div className="w-full flex flex-col items-center justify-center py-10 rounded-2xl overflow-hidden">
-          <video
-            src={loaderVideo}
-            autoPlay
-            loop
-            muted
-            className="w-24 h-24 rounded-lg"
-          />
+          
+          <div
+            style={{
+              backgroundImage: `url(${loader_img})`,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "contain",
+            }}
+            className=" flex items-center justify-center w-[150px] h-[150px] border-4 border-gray-200 rounded-full dark:border-red-700 animate-spin duration-50 bg-m"
+          >
+          </div>
           <p className="mt-3 text-gray-700 font-medium">{text}</p>
         </div>
       )}
