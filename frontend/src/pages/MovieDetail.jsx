@@ -104,7 +104,7 @@ export default function MovieDetail() {
     return acc;
   }, {});
 
-  if (loading) return <Loading text="Loading movie..." loader="page" />;
+  if (loading) return <Loading loader="page" text="" />;
   if (!movie) return <div className="p-6 text-red-600">Movie not found</div>;
 
   // Create next 7 days for date selection

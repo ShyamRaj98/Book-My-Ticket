@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../api/axios.js";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
+import Loading from "../components/Loading.jsx";
 
 export default function MyBooking() {
   const { user } = useSelector((s) => s.auth);
@@ -53,7 +54,7 @@ export default function MyBooking() {
   };
 
   if (loading)
-    return <p className="text-center mt-10 text-gray-500">Loading your bookings...</p>;
+    return <Loading loader="load" />;
 
   if (!bookings.length)
     return <p className="text-center mt-10 text-gray-500">No bookings found.</p>;

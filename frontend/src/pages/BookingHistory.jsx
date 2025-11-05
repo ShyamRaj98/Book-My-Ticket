@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchBookingHistory } from "../redux/slices/bookingSlice";
+import Loading from "../components/Loading";
+import Error from "../components/Error.jsx";
 
 const BookingHistory = ({ userId }) => {
   const dispatch = useDispatch();
@@ -10,8 +12,8 @@ const BookingHistory = ({ userId }) => {
     dispatch(fetchBookingHistory(userId));
   }, [dispatch, userId]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (loading) return <Loading loader="load" />;
+  if (error) return <Error message={error} />;
 
   return (
     <div>
@@ -22,8 +24,9 @@ const BookingHistory = ({ userId }) => {
         <ul>
           {bookings.map((b) => (
             <li key={b._id}>
-              🎬 <b>{b.movie.title}</b> at {b.theater.name} ({b.seats.join(", ")})  
-              — <b>Status:</b> {b.status} — <b>₹{b.totalPrice}</b>
+              🎬 <b>{b.movie.title}</b> at {b.theater.name} (
+              {b.seats.join(", ")}) — <b>Status:</b> {b.status} —{" "}
+              <b>₹{b.totalPrice}</b>
             </li>
           ))}
         </ul>

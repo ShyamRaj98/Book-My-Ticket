@@ -4,6 +4,8 @@ import api from "../api/axios"; // your axios instance
 import SeatMap from "../components/SeatMap";
 import { useSelector, useDispatch } from "react-redux";
 import { clearSelection } from "../features/seats/seatsSlice";
+import Loading from "../components/Loading";
+import Error from "../components/Error";
 
 export default function ShowtimeSeats() {
   const { id } = useParams(); // showtime id from route
@@ -32,9 +34,8 @@ export default function ShowtimeSeats() {
     loadShowtime();
   }, [id, dispatch]);
 
-  if (loading) return <div className="p-6 text-center">Loading showtime…</div>;
-  if (!showtime)
-    return <div className="p-6 text-center">Showtime not found</div>;
+  if (loading) return <Loading loader="roll" text="Loading showtime details..." />;
+  if (!showtime) return <Error message="Showtime not found" />;
 
   // Compute total price based on selected seats
   const total = selected.reduce((sum, sid) => {

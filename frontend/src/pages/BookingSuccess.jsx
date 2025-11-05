@@ -10,6 +10,7 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 import QRCode from "react-qr-code";
+import Loading from "../components/Loading.jsx";
 
 // =================== PDF Styles ===================
 const pdfStyles = StyleSheet.create({
@@ -131,7 +132,7 @@ export default function BookingSuccess() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen text-gray-500">
-        Loading booking details...
+        <Loading loader="load" text="Loading booking details..."/>
       </div>
     );
   }
