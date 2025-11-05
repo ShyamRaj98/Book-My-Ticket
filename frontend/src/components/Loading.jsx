@@ -5,7 +5,7 @@ const Loading = ({ text = "Loading...", loader = "page" }) => {
   return (
     <>
       {loader === "page" ? (
-        <div className="w-full max-h-[95vh] flex flex-col items-center justify-center py-10 rounded-2xl overflow-hidden">
+        <div className="w-full h-[95vh] flex flex-col items-center justify-center py-10 rounded-2xl overflow-hidden">
           <img src={loaderpage} className="w-[250px] h-[250px] rounded-full" />
           <p className="mt-3 text-gray-700 font-medium">{text}</p>
         </div>
