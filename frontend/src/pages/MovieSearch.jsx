@@ -29,7 +29,7 @@ export default function MovieSearch() {
         setResults(newMovies);
       }
 
-      setHasMore(newMovies.length > 0);
+      setHasMore(newMovies.length > 0 && newMovies.length >= 20);
       setTotalResults(newMovies.length);
     } catch (err) {
       console.error(err);
