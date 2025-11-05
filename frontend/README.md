@@ -4,8 +4,13 @@ A full-stack **MERN** application for managing movies, showtimes, bookings, and 
 
 ---
 
-## 🚀 Features
+## 🔔 Stripe Webhook (Production)
+- To handle live payments and send tickets via email, make sure to run the Stripe webhook listener in PowerShell:
+```bash
+stripe listen --forward-to https://your-backend-domain.com/api/webhooks/stripe
+```
 
+## 🚀 Features
 ### 👤 User Features
 - Register and login using JWT authentication
 - Browse movies and available showtimes
