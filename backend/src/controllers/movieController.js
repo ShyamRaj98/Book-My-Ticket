@@ -34,10 +34,10 @@ export const getMovies = async (req, res) => {
  */
 export const searchTmdbMovies = async (req, res) => {
   try {
-    const { q, page = 1 } = req.query;
-    if (!q) return res.status(400).json({ error: "Query (q) is required" });
+    const { query, page = 1 } = req.query;
+    if (!query) return res.status(400).json({ error: "Query parameter 'query' is required" });
 
-    const r = await searchTmdb(q, page);
+    const r = await searchTmdb(query, page);
     const items = (r.results || []).map((m) => ({
       tmdbId: m.id,
       title: m.title,

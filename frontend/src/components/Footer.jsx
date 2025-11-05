@@ -9,7 +9,7 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="bg-[#2b2b2f] text-gray-400 text-center py-10 mt-10">
+    <footer className="bg-[#2b2b2f] text-gray-400 text-center py-10">
       {/* Logo */}
       <div className="flex justify-center items-center mb-4 relative">
         <div className="flex-1 border-t border-gray-500 mx-8"></div>

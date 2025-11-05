@@ -11,12 +11,12 @@ export function MovieCarousel({ movies }) {
     <div className="my-8">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Recommended Movies</h2>
-        <a
-          href="#"
+        <Link
+          to="/movies"
           className="text-red-500 text-sm font-medium p-2 border-1 border-gray-300 rounded shadow-lg"
         >
           See All ›
-        </a>
+        </Link>
       </div>
 
       <Swiper

@@ -43,9 +43,6 @@ const MovieCard = ({ movie, movieDelete, movieEdit }) => {
           >
             <RiEdit2Fill size={24} color="red" />
           </button>
-          <div className="absolute top-2 right-2 bg-red-700 text-white px-2 py-1 text-xs rounded opacity-90">
-            {String(movie._id).startsWith("tmdb-") ? "Preview" : "Showtimes"}
-          </div>
         </div>
         <div className="pt-6 p-2 relative">
           <p className="w-fit bg-red-700 text-white font-semibold rounded-l-xl absolute top-0 right-0 px-2 pl-3">

@@ -2,6 +2,7 @@ import express from "express";
 import {
   getShowtimes,
   getShowtimeById,
+  checkShowtimeAvailability,
 } from "../../controllers/showtimeController.js";
 
 const router = express.Router();
@@ -15,5 +16,6 @@ const router = express.Router();
 
 router.get("/", getShowtimes);
 router.get("/:id", getShowtimeById);
+router.get("/availability/:movieId", checkShowtimeAvailability);
 
 export default router;

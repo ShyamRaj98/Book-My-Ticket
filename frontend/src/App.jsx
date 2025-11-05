@@ -31,6 +31,7 @@ import AdminLogin from "./pages/AdminLogin.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import PasswordSuccess from "./pages/PasswordSuccess.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
 function AppContent() {
   const dispatch = useDispatch();
@@ -103,7 +104,7 @@ function AppContent() {
             path="/booking-success/:bookingId"
             element={<BookingSuccess />}
           />
-
+          <Route path="*" element={<NotFound />} />
           {/* Admin routes */}
           <Route
             path="/admin"

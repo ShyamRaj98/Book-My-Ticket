@@ -17,7 +17,7 @@ p {
     font-family: "Sedgwick Ave Display", cursive;
 }
 
-button {
+button,a {
     cursor: pointer;
 }
 

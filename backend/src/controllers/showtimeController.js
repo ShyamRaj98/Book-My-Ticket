@@ -62,3 +62,27 @@ export const getShowtimeById = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch showtime details" });
   }
 };
+
+// Check if showtime available for a movie
+export const checkShowtimeAvailability = async (req, res) => {
+  try {
+    const { movieId } = req.params;
+
+    // current time
+    const now = new Date();
+
+    // find any active showtime (startTime still in future)
+    const showtime = await Showtime.findOne({
+      movie: movieId,
+      startTime: { $gte: now },
+    });
+
+    // if found -> available = true
+    const available = !!showtime;
+
+    res.json({ available });
+  } catch (error) {
+    console.error("Error checking showtime availability:", error);
+    res.status(500).json({ available: false, error: "Server error" });
+  }
+};

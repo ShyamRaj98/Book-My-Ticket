@@ -1,16 +1,28 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { GoHeartFill } from "react-icons/go";
+import api from "../api/axios";
 
 const MovieCard = ({ movie }) => {
-  console.log(movie);
-  return (
-    <Link
-      to={
-        String(movie._id).startsWith("tmdb-")
-          ? `/movies/tmdb/${movie.tmdbId}`
-          : `/movies/${movie._id}`
+  const [hasShowtime, setHasShowtime] = useState(false);
+
+  useEffect(() => {
+    const checkShowtime = async () => {
+      try {
+        if (!movie._id) return;
+
+        const res = await api.get(`/showtimes/availability/${movie._id}`);
+        setHasShowtime(res.data.available);
+      } catch (err) {
+        console.error("Error checking showtime:", err);
       }
-    >
+    };
+
+    checkShowtime();
+  }, [movie._id]);
+
+  return (
+    <Link to={`/movies/${movie._id}`}>
       <div className="h-full group border-2 border-red-700 rounded-3xl flex flex-col justify-between overflow-hidden">
         <div className="relative overflow-hidden">
           <img
@@ -31,20 +43,27 @@ const MovieCard = ({ movie }) => {
           >
             <GoHeartFill size={24} color="red" />
           </button>
-          <div className="absolute top-2 right-2 bg-red-700 text-white px-2 py-1 text-xs rounded opacity-90">
-            {String(movie._id).startsWith("tmdb-") ? "Preview" : "Showtimes"}
+
+          {/* Showtime Badge */}
+          <div
+            className={`absolute top-2 right-2 px-2 py-1 text-xs rounded text-white opacity-90 ${
+              hasShowtime ? "bg-green-600" : "bg-gray-500"
+            }`}
+          >
+            {hasShowtime ? "Showtime" : "No Showtime"}
           </div>
         </div>
+
         <div className="pt-6 p-2 relative">
           <p className="w-fit bg-red-700 text-white font-semibold rounded-l-xl absolute top-0 right-0 px-2 pl-3">
-            {movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : ""}
-            -{movie.runtime}min
+            {movie.releaseDate ? new Date(movie.releaseDate).getFullYear() : ""}{" "}
+            - {movie.runtime}min
           </p>
           <h3 className="movie-title h-[50px] text-lg font-semibold leading-5">
             {movie.title}
           </h3>
           <p className="movie-plot text-md text-gray-500">
-            {movie.genres.map((genre) => genre).join("/")}
+            {movie.genres?.join("/") || ""}
           </p>
         </div>
       </div>

@@ -1,16 +1,47 @@
-# React + Vite
+# 🎬 Movie Ticket Booking System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack **MERN** application for managing movies, showtimes, bookings, and admin reports — built with **React, Node.js, Express, and MongoDB**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## React Compiler
+### 👤 User Features
+- Register and login using JWT authentication
+- Browse movies and available showtimes
+- Book movie tickets with seat selection
+- Pay using Stripe integration (Card/UPI)
+- Payment success mail send pdf
+- View booking history
+- Edit user profile (name and phone)
 
-The React Compiler is not enabled on this template. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 🧑‍💼 Admin Features
+- Register ADMIN SECRET KEY = "ADMIN@123"
+- Register and login using JWT authentication
+- Add, edit, delete movies and showtimes
+- View all bookings
+- Generate sales and occupancy reports
+- Dashboard analytics and charts
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🧩 Tech Stack
+
+| Area | Technology |
+|------|-------------|
+| Frontend | React.js + Redux Toolkit + Tailwind CSS |
+| Backend | Node.js + Express.js |
+| Database | MongoDB + Mongoose |
+| Authentication | JWT (JSON Web Token) |
+| Payments | Stripe API |
+| Charts | Recharts |
+| Reports | MongoDB Aggregation + Mongoose Models |
+
+---
+
+## ⚙️ Installation
+
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/ShyamRaj98/Book-My-Ticket.git
+cd Book-My-Ticket

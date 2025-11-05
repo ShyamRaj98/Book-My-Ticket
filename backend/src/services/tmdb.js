@@ -19,13 +19,17 @@ export async function searchTmdb(query, page = 1) {
 }
 
 // helper: fetch TMDb movie detail by id
-export async function fetchTmdbMovie(tmdbId) {
-  if (!TMDB_API_KEY) throw new Error('TMDB_API_KEY not configured');
-  const url = `${TMDB_BASE}/movie/${tmdbId}?api_key=${TMDB_API_KEY}`;
+ export async function fetchTmdbMovie(tmdbId) {
+  if (!TMDB_API_KEY) throw new Error("TMDB_API_KEY not configured");
+
+  const url = `${TMDB_BASE}/movie/${tmdbId}?api_key=${TMDB_API_KEY}&append_to_response=credits`;
   const res = await fetch(url);
+
   if (!res.ok) {
     const text = await res.text();
-    throw new Error('TMDb fetch failed: ' + text);
+    console.error("TMDb fetch failed:", text);
+    throw new Error("TMDb fetch failed: " + text);
   }
+
   return res.json();
 }

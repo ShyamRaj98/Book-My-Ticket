@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import api from "../../api/axios.js";
 import { InputField, DateInput } from "../../components/InputFields.jsx";
 import AdminMovieCard from "../../components/AdminMovieCard.jsx";
+import Loading from "../../components/Loading.jsx";
+import Error from "../../components/Error.jsx";
 
 export default function AdminMovies() {
   const [movies, setMovies] = useState([]);
@@ -144,9 +146,8 @@ export default function AdminMovies() {
   }
 
   // -------- UI ----------
-  if (loading)
-    return <div className="p-4 text-gray-600">Loading movies...</div>;
-  if (error) return <div className="p-4 text-red-600">Error: {error}</div>;
+  if (loading) return <Loading loader="page" text="Fetching movies..." />;
+  if (error) return <Error text={error} />;
 
   return (
     <div className="h-[calc(100vh-64px)] overflow-y-auto p-6 bg-gray-50 text-gray-800 space-y-10">
@@ -229,7 +230,7 @@ export default function AdminMovies() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        {searchLoading && <p className="mt-2 text-gray-400">Searching...</p>}
+        {searchLoading && <Loading loader="list" text="Searching ..." />}
         <div className="grid md:grid-cols-3 gap-4 mt-4">
           {results.map((movie) => (
             <div

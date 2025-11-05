@@ -1,27 +1,23 @@
 import express from "express";
-import { auth } from "../../middlewares/auth.js";
-import { requireAdmin } from "../../middlewares/admin.js";
 import {
   getSalesReport,
-  getOccupancyReport,
+  getPopularMovies,
+  getTheaterOccupancy,
+  getUserActivity,
+  getDashboardSummary,
 } from "../../controllers/adminReportController.js";
+import { auth } from "../../middlewares/auth.js";
+import { requireAdmin } from "../../middlewares/admin.js";
 
 const router = express.Router();
 
-/**
- * ===============================
- * 📊 SALES REPORT (Last 7 Days)
- * GET /api/admin/reports/sales?from=&to=
- * ===============================
- */
-router.get("/sales", auth, requireAdmin, getSalesReport);
+router.use(auth);
+router.use(requireAdmin);
 
-/**
- * ===============================
- * 🎟️ OCCUPANCY REPORT
- * GET /api/admin/reports/occupancy?movieId=
- * ===============================
- */
-router.get("/occupancy", auth, requireAdmin, getOccupancyReport);
+router.get("/sales", getSalesReport);
+router.get("/popular-movies", getPopularMovies);
+router.get("/theater-occupancy", getTheaterOccupancy);
+router.get("/user-activity", getUserActivity);
+router.get("/summary", getDashboardSummary);
 
 export default router;

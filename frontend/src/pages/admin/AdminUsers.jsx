@@ -75,37 +75,37 @@ export default function AdminUsers() {
         <div>No users found.</div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse border border-gray-300">
+          <table className="w-full bg-white border border-gray-800 shadow-xl rounded-lg">
             <thead>
               <tr className="bg-gray-100">
-                <th className="border p-2 text-center">
+                <th className="border border-gray-200 p-2 text-center">
                   <input
                     type="checkbox"
                     checked={selectedUsers.length === users.length}
                     onChange={toggleSelectAll}
                   />
                 </th>
-                <th className="border p-2 text-left">Name</th>
-                <th className="border p-2 text-left">Email</th>
-                <th className="border p-2 text-left">Role</th>
-                <th className="border p-2 text-center">Actions</th>
+                <th className="border border-gray-200 p-2 text-left">Name</th>
+                <th className="border border-gray-200 p-2 text-left">Email</th>
+                <th className="border border-gray-200 p-2 text-left">Role</th>
+                <th className="border border-gray-200 p-2 text-center">Actions</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user) => {
                 const isLoading = loadingUsers.includes(user._id);
                 return (
-                  <tr key={user._id} className="hover:bg-gray-50">
-                    <td className="border p-2 text-center">
+                  <tr key={user._id} className="hover:bg-red-100">
+                    <td className="border border-gray-200 p-2 text-center">
                       <input
                         type="checkbox"
                         checked={selectedUsers.includes(user._id)}
                         onChange={() => toggleSelect(user._id)}
                       />
                     </td>
-                    <td className="border p-2">{user.name}</td>
-                    <td className="border p-2">{user.email}</td>
-                    <td className="border p-2">
+                    <td className="border border-gray-200 p-2">{user.name}</td>
+                    <td className="border border-gray-200 p-2">{user.email}</td>
+                    <td className="border border-gray-200 p-2">
                       <SelectInput
                         options={[
                           { value: "user", label: "User" },
@@ -121,7 +121,7 @@ export default function AdminUsers() {
                         </span>
                       )}
                     </td>
-                    <td className="border p-2 text-center space-x-2">
+                    <td className="border border-gray-200 p-2 text-center space-x-2">
                       <button
                         disabled={isLoading}
                         onClick={() => deleteUser(user._id)}
