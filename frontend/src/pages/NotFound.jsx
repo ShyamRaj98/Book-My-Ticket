@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Error404 from "../../public/assets/404.mp4";
+import Error404 from "../assets/video/404.mp4";
 
 export default function NotFound() {
   return (
