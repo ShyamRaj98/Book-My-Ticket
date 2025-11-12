@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../../api/axios"; // adjust path if needed
+import api from "../../api/axios";
 
 const tokenFromStorage = localStorage.getItem("token") || null;
 const userFromStorage = localStorage.getItem("user")
@@ -7,50 +7,73 @@ const userFromStorage = localStorage.getItem("user")
   : null;
 
 /* ================================
-   🔹 USER & ADMIN REGISTER / LOGIN
+   🔹 REGISTER (User, Admin, Theater)
 ================================= */
+export const register = createAsyncThunk(
+  "auth/register",
+  async (payload, thunkAPI) => {
+    try {
+      let endpoint = "/auth/register";
 
-export const register = createAsyncThunk("auth/register", async (payload, thunkAPI) => {
-  try {
-    const endpoint = payload.role === "admin" ? "auth/admin/register" : "/auth/register";
-    const { data } = await api.post(endpoint, payload);
-    return data;
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data || { error: "Register failed" });
-  }
-});
+      if (payload.role === "admin") endpoint = "/auth/admin/register";
+      else if (payload.role === "theater") endpoint = "/auth/theater/register";
 
-// ✅ Login (Single page for both user/admin)
-export const login = createAsyncThunk("auth/login", async (payload, thunkAPI) => {
-  try {
-    // backend auto-detects role (user or admin) based on route
-    const route = payload.role === "admin" ? "auth/admin/login" : "/auth/login";
-    const { data } = await api.post(route, payload);
-    return data;
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data || { error: "Login failed" });
-  }
-});
-
-// ✅ Fetch Profile (after login)
-export const fetchProfile = createAsyncThunk("auth/fetchProfile", async (_, thunkAPI) => {
-  try {
-    const { data } = await api.get("/auth/profile");
-    return data.user;
-  } catch (err) {
-    if (err.response?.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      const { data } = await api.post(endpoint, payload);
+      return data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data || { error: "Register failed" }
+      );
     }
-    return thunkAPI.rejectWithValue(err.response?.data || { error: "Fetch profile failed" });
   }
-});
+);
 
 /* ================================
-   🔹 PASSWORD RESET FLOWS
+   🔹 LOGIN (User, Admin, Theater)
 ================================= */
+export const login = createAsyncThunk(
+  "auth/login",
+  async (payload, thunkAPI) => {
+    try {
+      let route = "/auth/login";
 
-// ✅ Forgot Password (send email)
+      if (payload.role === "admin") route = "/auth/admin/login";
+      else if (payload.role === "theater") route = "/auth/theater/login";
+
+      const { data } = await api.post(route, payload);
+      return data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data || { error: "Login failed" }
+      );
+    }
+  }
+);
+
+/* ================================
+   🔹 FETCH PROFILE
+================================= */
+export const fetchProfile = createAsyncThunk(
+  "auth/fetchProfile",
+  async (_, thunkAPI) => {
+    try {
+      const { data } = await api.get("/auth/profile");
+      return data.user;
+    } catch (err) {
+      if (err.response?.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
+      return thunkAPI.rejectWithValue(
+        err.response?.data || { error: "Fetch profile failed" }
+      );
+    }
+  }
+);
+
+/* ================================
+   🔹 PASSWORD FLOWS
+================================= */
 export const forgotPassword = createAsyncThunk(
   "auth/forgotPassword",
   async (email, thunkAPI) => {
@@ -58,41 +81,49 @@ export const forgotPassword = createAsyncThunk(
       const { data } = await api.post("/auth/forgot-password", { email });
       return data.message;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response?.data?.error || "Email send failed");
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.error || "Email send failed"
+      );
     }
   }
 );
 
-// ✅ Reset Password (set new password)
 export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
   async ({ token, newPassword }, thunkAPI) => {
     try {
-      const { data } = await api.post(`/auth/reset-password/${token}`, { newPassword });
+      const { data } = await api.post(`/auth/reset-password/${token}`, {
+        newPassword,
+      });
       return data.message;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response?.data?.error || "Reset failed");
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.error || "Reset failed"
+      );
     }
   }
 );
 
 /* ================================
-   🔹 PROFILE UPDATE
+   🔹 UPDATE PROFILE
 ================================= */
-
-export const updateProfile = createAsyncThunk("auth/updateProfile", async (payload, thunkAPI) => {
-  try {
-    const { data } = await api.put("/auth/profile", payload);
-    return data.user;
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data || { error: "Update failed" });
+export const updateProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async (payload, thunkAPI) => {
+    try {
+      const { data } = await api.put("/auth/profile", payload);
+      return data.user;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data || { error: "Update failed" }
+      );
+    }
   }
-});
+);
 
 /* ================================
-   🔹 AUTH SLICE
+   🔹 SLICE
 ================================= */
-
 const authSlice = createSlice({
   name: "auth",
   initialState: {
@@ -117,8 +148,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-
-      /* -------- Register User & admin -------- */
+      // 🔹 Register
       .addCase(register.pending, (s) => {
         s.loading = true;
         s.error = null;
@@ -128,13 +158,14 @@ const authSlice = createSlice({
         s.user = a.payload.user;
         s.token = a.payload.token;
         localStorage.setItem("token", a.payload.token);
+        localStorage.setItem("user", JSON.stringify(a.payload.user));
       })
       .addCase(register.rejected, (s, a) => {
         s.loading = false;
         s.error = a.payload?.error;
       })
 
-      /* -------- Login -------- */
+      // 🔹 Login
       .addCase(login.pending, (s) => {
         s.loading = true;
         s.error = null;
@@ -151,12 +182,7 @@ const authSlice = createSlice({
         s.error = a.payload?.error;
       })
 
-      /* -------- Forgot Password -------- */
-      .addCase(forgotPassword.pending, (s) => {
-        s.loading = true;
-        s.error = null;
-        s.successMessage = null;
-      })
+      // 🔹 Forgot Password
       .addCase(forgotPassword.fulfilled, (s, a) => {
         s.loading = false;
         s.successMessage = a.payload;
@@ -166,12 +192,7 @@ const authSlice = createSlice({
         s.error = a.payload;
       })
 
-      /* -------- Reset Password -------- */
-      .addCase(resetPassword.pending, (s) => {
-        s.loading = true;
-        s.error = null;
-        s.successMessage = null;
-      })
+      // 🔹 Reset Password
       .addCase(resetPassword.fulfilled, (s, a) => {
         s.loading = false;
         s.successMessage = a.payload;
@@ -181,15 +202,12 @@ const authSlice = createSlice({
         s.error = a.payload;
       })
 
-      /* -------- Fetch Profile -------- */
+      // 🔹 Fetch Profile
       .addCase(fetchProfile.fulfilled, (s, a) => {
         s.user = a.payload;
       })
 
-      /* -------- Update Profile -------- */
-      .addCase(updateProfile.pending, (s) => {
-        s.loading = true;
-      })
+      // 🔹 Update Profile
       .addCase(updateProfile.fulfilled, (s, a) => {
         s.loading = false;
         s.user = a.payload;

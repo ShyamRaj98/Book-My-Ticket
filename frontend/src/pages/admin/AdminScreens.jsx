@@ -157,7 +157,7 @@ export default function AdminScreen() {
                       <div className="text-xs text-gray-500">{s.layoutName || "No layout"} • Seats: {s.seats?.length || 0}</div>
                     </div>
                     <div className="flex gap-2 mt-1">
-                      <button onClick={() => editScreen(t._id, s)} className="text-blue-600 text-sm hover:underline">Edit</button>
+                      <button onClick={() => editScreen(t._id, s)} className="text-blue-600 text-sm hover:underline">Seat Edit</button>
                       <button onClick={() => deleteScreen(t._id, s.name)} className="text-red-600 text-sm hover:underline">Delete</button>
                     </div>
                   </li>

@@ -3,8 +3,10 @@ import { auth as authMiddleware } from "../../middlewares/auth.js";
 import { requireAdmin } from "../../middlewares/admin.js";
 import {
   getAllUsers,
-  updateUserRolesBulk,
   deleteUser,
+  toggleUserApproval,
+  toggleTheaterApproval,
+  getAllTheaters,
 } from "../../controllers/adminUserController.js";
 
 const router = express.Router();
@@ -13,13 +15,10 @@ const router = express.Router();
 router.use(authMiddleware);
 router.use(requireAdmin);
 
-// GET all users
 router.get("/", getAllUsers);
-
-// PATCH update user roles in bulk
-router.patch("/roles", updateUserRolesBulk);
-
-// DELETE a specific user
+router.get("/theaters", getAllTheaters);
+router.patch("/:id/approve", toggleUserApproval);
+router.patch("/theaters/:id/approve", toggleTheaterApproval);
 router.delete("/:id", deleteUser);
 
 export default router;

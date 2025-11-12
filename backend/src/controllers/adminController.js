@@ -176,8 +176,6 @@ const adminController = {
       res.status(500).json({ error: "failed to add screen" });
     }
   },
-// Delete a screen from a theater
-// DELETE /api/admin/screens/:theaterId/:screenName
 
 // Update an existing screen: rename or apply different layout
 // PUT /api/admin/screens/:theaterId

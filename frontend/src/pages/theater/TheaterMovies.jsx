@@ -32,7 +32,7 @@ export default function TheaterMovies() {
   async function loadMovies() {
     setLoading(true);
     try {
-      const res = await api.get("/admin/movies");
+      const res = await api.get("/theater/movies");
       setMovies(res.data.movies || []);
     } catch (err) {
       console.error(err);
@@ -70,7 +70,7 @@ export default function TheaterMovies() {
     if (!window.confirm(`Add "${tmdbMovie.title}" to database?`)) return;
     try {
       setAddingId(tmdbMovie.tmdbId);
-      await api.post("/admin/movies", { tmdbId: tmdbMovie.tmdbId });
+      await api.post("/theater/movies", { tmdbId: tmdbMovie.tmdbId });
       alert(`"${tmdbMovie.title}" added successfully`);
       loadMovies();
     } catch (err) {
@@ -92,10 +92,10 @@ export default function TheaterMovies() {
           .filter(Boolean),
       };
       if (editingId) {
-        await api.put(`/admin/movies/${editingId}`, payload);
+        await api.put(`/theater/movies/${editingId}`, payload);
         alert("Movie updated");
       } else {
-        await api.post("/admin/movies", payload);
+        await api.post("/theater/movies", payload);
         alert("Movie added");
       }
       resetForm();
@@ -138,7 +138,7 @@ export default function TheaterMovies() {
   async function handleDelete(id) {
     if (!window.confirm("Delete this movie?")) return;
     try {
-      await api.delete(`/admin/movies/${id}`);
+      await api.delete(`/theater/movies/${id}`);
       alert("Deleted successfully");
       loadMovies();
     } catch (err) {
@@ -154,8 +154,8 @@ export default function TheaterMovies() {
   return (
     <div className="h-[calc(100vh-64px)] overflow-y-auto p-6 text-gray-800 space-y-10">
       {/* Manual Form */}
-      <div className="bg-white p-6 rounded-2xl border-x-4 border-red-600 shadow-md">
-        <h2 className="text-2xl font-semibold mb-4 text-red-600">
+      <div className="bg-white p-6 rounded-2xl border-x-4 border-teal-600 shadow-md">
+        <h2 className="text-2xl font-semibold mb-4 text-teal-600">
           {editingId ? "Edit Movie" : "Add Movie Manually"}
         </h2>
         <form className="" onSubmit={handleSubmit}>
@@ -205,7 +205,7 @@ export default function TheaterMovies() {
           <div className="flex gap-3 col-span-2 mt-4">
             <button
               type="submit"
-              className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 py-2 rounded-lg shadow-md transition-transform hover:scale-105"
+              className="bg-teal-600 hover:bg-teal-700 text-white font-medium px-6 py-2 rounded-lg shadow-md transition-transform hover:scale-105"
             >
               {editingId ? "Update Movie" : "Add Movie"}
             </button>
@@ -223,8 +223,8 @@ export default function TheaterMovies() {
       </div>
 
       {/* Live TMDb Search */}
-      <div className="bg-white p-6 rounded-2xl border-x-4 border-red-600 shadow-md">
-        <h2 className="text-2xl font-semibold mb-4 text-red-600">
+      <div className="bg-white p-6 rounded-2xl border-x-4 border-teal-600 shadow-md">
+        <h2 className="text-2xl font-semibold mb-4 text-teal-600">
           Search from TMDb
         </h2>
 
@@ -242,7 +242,7 @@ export default function TheaterMovies() {
                 alert("Please enter at least 2 characters");
               }
             }}
-            className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg shadow-md transition-transform hover:scale-105"
+            className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-lg shadow-md transition-transform hover:scale-105"
           >
             Search
           </button>
@@ -283,7 +283,7 @@ export default function TheaterMovies() {
                   })
                 }
                 disabled={addingId === (movie.id || movie.tmdbId)}
-                className="mt-2 w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg transition-transform hover:scale-105"
+                className="mt-2 w-full bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-lg transition-transform hover:scale-105"
               >
                 {addingId === (movie.id || movie.tmdbId)
                   ? "Adding..."
@@ -296,7 +296,7 @@ export default function TheaterMovies() {
 
       {/* Movies List */}
       <div>
-        <h2 className="text-2xl font-semibold mb-4 text-red-600">
+        <h2 className="text-2xl font-semibold mb-4 text-teal-600">
           Movies in Database
         </h2>
         {movies.length === 0 ? (

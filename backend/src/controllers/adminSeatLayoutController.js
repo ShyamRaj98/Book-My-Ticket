@@ -11,7 +11,7 @@ export const createLayout = async (req, res) => {
     const { name, seats } = req.body;
     if (!name) return res.status(400).json({ error: "name required" });
 
-    const layout = await SeatLayout.create({ name, seats: seats || [] });
+    const layout = await SeatLayout.create({ name, seats: seats || [], createdBy: req.user.id, });
     res.json({ layout });
   } catch (err) {
     console.error("❌ createLayout error:", err);

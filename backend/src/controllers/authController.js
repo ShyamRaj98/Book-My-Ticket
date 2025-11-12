@@ -40,13 +40,14 @@ export const registerUser = async (req, res) => {
       password: hashed,
       phone,
       role: "user",
+      isApproved: true,
     });
 
     const token = createToken(user);
     res.json({
       success: true,
       message: "User registered successfully",
-      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      user: { id: user._id, name: user.name, email: user.email, role: user.role, isApproved: user.isApproved },
       token,
     });
   } catch (err) {

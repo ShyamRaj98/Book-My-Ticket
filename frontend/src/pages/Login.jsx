@@ -11,26 +11,28 @@ import {
 const Login = () => {
   const dispatch = useDispatch();
   const { loading, error } = useSelector((state) => state.auth);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     role: "user",
   });
+
   const navigate = useNavigate();
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await dispatch(login(formData));
-    console.log("Login result:", result);
-    const { role } = formData;
-    if (result.payload && result.payload.error) {
-      console.log("Login error:", result.payload.error);
-      return;
-    }
+
+    if (result.payload && result.payload.error) return;
+
     if (result.meta.requestStatus === "fulfilled") {
+      const { role } = formData;
       if (role === "admin") navigate("/admin");
+      else if (role === "theater") navigate("/theater");
       else navigate("/");
     }
   };
@@ -53,6 +55,7 @@ const Login = () => {
           options={[
             { value: "user", label: "User" },
             { value: "admin", label: "Admin" },
+            { value: "theater", label: "Theater" },
           ]}
         />
 
@@ -76,11 +79,15 @@ const Login = () => {
             placeholder="Enter your password"
           />
         </div>
+
         <div className="h-[30px] mt-2">
-        {error && (
-          <p className="bg-red-200 my-1 p-1 border-red-500 text-red-500 text-sm font-semibold text-center rounded-lg">{error}</p>
-        )}
+          {error && (
+            <p className="bg-red-200 my-1 p-1 border-red-500 text-red-500 text-sm font-semibold text-center rounded-lg">
+              {error}
+            </p>
+          )}
         </div>
+
         <button
           type="submit"
           disabled={loading}
@@ -90,14 +97,29 @@ const Login = () => {
         </button>
 
         <div className="flex flex-col text-center mt-2 text-sm text-gray-600">
-          <Link to="/forgot-password" className="text-red-500 font-semibold text-md text-end hover:underline">
+          <Link
+            to="/forgot-password"
+            className="text-red-500 font-semibold text-md text-end hover:underline"
+          >
             Forgot password?
           </Link>
           <Link to="/register" className="font-semibold hover:underline my-2">
-            Don't have an account? <span className="text-red-500">Register</span> 
+            Don’t have an account?{" "}
+            <span className="text-red-500">Register User</span>
           </Link>
-          <Link to="/register-admin" className="font-semibold hover:underline my-2">
-            Don't have an account? <span className="text-red-500">Register Admin</span> 
+          <Link
+            to="/register-admin"
+            className="font-semibold hover:underline my-2"
+          >
+            Don’t have an account?{" "}
+            <span className="text-red-500">Register Admin</span>
+          </Link>
+          <Link
+            to="/register-theater"
+            className="font-semibold hover:underline my-2"
+          >
+            Don’t have an account?{" "}
+            <span className="text-blue-500">Register Theater</span>
           </Link>
         </div>
       </form>

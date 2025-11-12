@@ -12,6 +12,7 @@ import {
   resetPassword,
 } from "../controllers/passwordController.js";
 import { registerAdmin, loginAdmin } from "../controllers/adminAuthController.js";
+import { loginTheater, registerTheater } from "../controllers/theaterAuthController.js";
 
 const router = express.Router();
 
@@ -20,6 +21,9 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/admin/register", registerAdmin);
 router.post("/admin/login", loginAdmin);
+// routes for theater
+router.post("/theater/register", registerTheater);
+router.post("/theater/login", loginTheater);
 router.post("/forgot-password", requestPasswordReset);
 router.post("/reset-password/:token", resetPassword);
 

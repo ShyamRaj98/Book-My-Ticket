@@ -12,7 +12,7 @@ if (!TMDB_API_KEY) {
 // helper: search TMDb movies
 export async function searchTmdb(query, page = 1) {
   if (!TMDB_API_KEY) throw new Error('TMDB_API_KEY not configured');
-  const url = `${TMDB_BASE}/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}&page=${page}&include_adult=false`;
+  const url = `${TMDB_BASE}/search/movie?api_key=${TMDB_API_KEY}&query=${query}&page=${page}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('TMDb search failed');
   return res.json();

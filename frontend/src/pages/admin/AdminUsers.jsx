@@ -1,142 +1,140 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axios.js";
-import { SelectInput } from "../../components/InputFields.jsx";
+import Loading from "../../components/Loading.jsx";
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const [roleUpdate, setRoleUpdate] = useState({});
-  const [loadingUsers, setLoadingUsers] = useState([]); // userIds loading
+  const [theaters, setTheaters] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [filter, setFilter] = useState("user"); // "user" or "theater"
 
   useEffect(() => {
-    loadUsers();
+    loadAll();
   }, []);
 
-  async function loadUsers() {
+  async function loadAll() {
+    setLoading(true);
     try {
-      const res = await api.get("/admin/users");
-      setUsers(res.data.users || []);
+      const [usersRes, theatersRes] = await Promise.all([
+        api.get("/admin/users"),
+        api.get("/admin/users/theaters"),
+      ]);
+      setUsers(usersRes.data.users || []);
+      setTheaters(theatersRes.data.theaters || []);
+      console.log("user", usersRes.data.users);
+      console.log("theater", theatersRes.data.theaters);
     } catch (err) {
-      console.error("Failed to load users", err);
-      alert("❌ Failed to load users");
+      console.error(err);
+      alert("Failed to load data");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function toggleApproval(type, id) {
+    if (!window.confirm("Are you sure?")) return;
+    try {
+      await api.patch(`/admin/${type}/${id}/approve`);
+      loadAll();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update approval");
     }
   }
 
   async function deleteUser(userId) {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
-    setLoadingUsers((prev) => [...prev, userId]);
+    if (!window.confirm("Delete this user?")) return;
     try {
       await api.delete(`/admin/users/${userId}`);
-      alert("✅ User deleted");
-      loadUsers();
-      setSelectedUsers((prev) => prev.filter((id) => id !== userId));
+      loadAll();
     } catch (err) {
       console.error(err);
-      alert("❌ Delete failed");
-    } finally {
-      setLoadingUsers((prev) => prev.filter((id) => id !== userId));
+      alert("Delete failed");
     }
   }
 
-  function toggleSelect(userId) {
-    setSelectedUsers((prev) =>
-      prev.includes(userId)
-        ? prev.filter((id) => id !== userId)
-        : [...prev, userId]
-    );
-  }
-
-  function toggleSelectAll() {
-    if (selectedUsers.length === users.length) setSelectedUsers([]);
-    else setSelectedUsers(users.map((u) => u._id));
-  }
-
-  async function updateUserRole(userId, newRole) {
-    if (!window.confirm(`Change role of this user to ${newRole}?`)) return;
-    setLoadingUsers((prev) => [...prev, userId]);
-    try {
-      await api.patch(`/admin/users/roles`, [{ userId, role: newRole }]);
-      alert("✅ Role updated successfully");
-      setRoleUpdate((prev) => ({ ...prev, [userId]: newRole }));
-      loadUsers();
-    } catch (err) {
-      console.error(err);
-      alert("❌ Role update failed");
-    } finally {
-      setLoadingUsers((prev) => prev.filter((id) => id !== userId));
-    }
-  }
+  const filteredUsers = filter === "user" ? users : theaters;
 
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold mb-4">Users Management</h1>
+      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
 
-      {users.length === 0 ? (
-        <div>No users found.</div>
+      <div className="flex gap-2 mb-4">
+        <button
+          className={`px-6 py-2 font-semibold shadow-xl rounded ${
+            filter === "user" ? "bg-blue-500 text-white" : "bg-gray-200"
+          }`}
+          onClick={() => setFilter("user")}
+        >
+          Users
+        </button>
+        <button
+          className={`px-6 py-0 font-semibold shadow-xl rounded ${
+            filter === "theater" ? "bg-blue-500 text-white" : "bg-gray-200"
+          }`}
+          onClick={() => setFilter("theater")}
+        >
+          Theaters
+        </button>
+      </div>
+
+      {loading ? (
+        <Loading loader="user" text="Loading..." />
+      ) : filteredUsers.length === 0 ? (
+        <div>No records found.</div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full bg-white border border-gray-800 shadow-xl rounded-lg">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border border-gray-200 p-2 text-center">
-                  <input
-                    type="checkbox"
-                    checked={selectedUsers.length === users.length}
-                    onChange={toggleSelectAll}
-                  />
-                </th>
-                <th className="border border-gray-200 p-2 text-left">Name</th>
-                <th className="border border-gray-200 p-2 text-left">Email</th>
-                <th className="border border-gray-200 p-2 text-left">Role</th>
-                <th className="border border-gray-200 p-2 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => {
-                const isLoading = loadingUsers.includes(user._id);
-                return (
-                  <tr key={user._id} className="hover:bg-red-100">
-                    <td className="border border-gray-200 p-2 text-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedUsers.includes(user._id)}
-                        onChange={() => toggleSelect(user._id)}
-                      />
+          <div className="min-w-[700px] w-full border border-red-300 rounded-lg overflow-hidden">
+            <table className="w-full bg-white border border-red-300 shadow-md rounded-lg overflow-scroll">
+              <thead>
+                <tr className="bg-red-100">
+                  <th className="p-2 border border-red-300">Name</th>
+                  <th className="p-2 border border-red-300">Email</th>
+                  <th className="p-2 border border-red-300">Role</th>
+                  <th className="p-2 border border-red-300 text-sm">Delete Approved</th>
+                  <th className="p-2 borderborder-red-300">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredUsers.map((u) => (
+                  <tr key={u._id} className="hover:bg-red-50">
+                    <td className="p-2 border border-red-300 font-semibold">{u.name || u.owner?.name}</td>
+                    <td className="p-2 border border-red-300">
+                      {u.email || u.owner?.email || "-"}
                     </td>
-                    <td className="border border-gray-200 p-2">{user.name}</td>
-                    <td className="border border-gray-200 p-2">{user.email}</td>
-                    <td className="border border-gray-200 p-2">
-                      <SelectInput
-                        options={[
-                          { value: "user", label: "User" },
-                          { value: "admin", label: "Admin" },
-                        ]}
-                        value={roleUpdate[user._id] ?? user.role}
-                        onChange={(val) => updateUserRole(user._id, val)}
-                        placeholder={user.role}
-                      />
-                      {isLoading && (
-                        <span className="ml-2 text-gray-500 animate-pulse">
-                          Updating...
-                        </span>
-                      )}
-                    </td>
-                    <td className="border border-gray-200 p-2 text-center space-x-2">
+                    <td className="p-2 border border-red-300">{u.role || "theater"}</td>
+                    <td className="p-2 border border-red-300 text-center">
                       <button
-                        disabled={isLoading}
-                        onClick={() => deleteUser(user._id)}
-                        className={`px-3 py-1 rounded text-white ${
-                          isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-red-500"
+                        className={`px-3 py-1 rounded ${
+                          u.isApproved
+                            ? "bg-green-500 text-white"
+                            : "bg-yellow-400"
                         }`}
+                        onClick={() =>
+                          toggleApproval(
+                            filter === "user" ? "users" : "users/theaters",
+                            u._id
+                          )
+                        }
                       >
-                        {isLoading ? "Deleting..." : "Delete"}
+                        {u.isApproved ? "Approved" : "Pending"}
                       </button>
                     </td>
+                    <td className="p-2 border border-red-300 text-center">
+                      {filter === "user" && (
+                        <button
+                          className="px-3 py-1 bg-red-500 text-white rounded"
+                          onClick={() => deleteUser(u._id)}
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </td>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

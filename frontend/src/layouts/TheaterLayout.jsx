@@ -13,24 +13,23 @@ import {
   Users
 } from "lucide-react";
 
-export default function AdminLayout() {
+export default function TheaterLayout() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const menuItems = [
-      { path: "/admin/movies", label: "Movies", icon: <Film size={22} />},
-      { path: "/admin/theaters", label: "Theaters",icon: <Building size={22} />,},
-      { path: "/admin/seatlayout", label: "Seat Layout", icon: <Layout size={22} />,},
-      { path: "/admin/screens", label: "Screens", icon: <ScreenShare size={22} />,},
-      { path: "/admin/showtimes", label: "Showtimes", icon: <Clock size={22} /> },
-      { path: "/admin/reports", label: "Reports", icon: <BarChart3 size={22} /> },
-      { path: "/admin/all-users", label: "Users", icon: <Users size={22} /> },
-    ];
+    { path: "/theater/movies", label: "Movies", icon: <Film size={22} />},
+    { path: "/theater/my-theater", label: "Theaters",icon: <Building size={22} />,},
+    { path: "/theater/seatlayout", label: "Seat Layout", icon: <Layout size={22} />,},
+    { path: "/theater/screens", label: "Screens", icon: <ScreenShare size={22} />,},
+    { path: "/theater/showtimes", label: "Showtimes", icon: <Clock size={22} /> },
+    { path: "/theater/reports", label: "Reports", icon: <BarChart3 size={22} /> },
+  ];
 
   const SidebarContent = () => (
     <div
-      className={`flex flex-col h-full bg-white border-r-2 border-red-600 text-red-700 px-2 py-3 transition-all duration-300 shadow-md ${
+      className={`flex flex-col h-full bg-white border-r-2 border-teal-600 text-teal-700 px-2 py-3 transition-all duration-300 shadow-md ${
         collapsed ? "w-auto" : "w-64"
       }`}
     >
@@ -42,15 +41,15 @@ export default function AdminLayout() {
       >
         {!collapsed && (
           <div className="hidden md:block">
-            <h2 className="text-2xl font-bold tracking-wide text-red-700">
+            <h2 className="text-2xl font-bold tracking-wide text-teal-700">
               Dashboard
             </h2>
-            <p className="text-sm text-gray-400">Movie Management</p>
+            <p className="text-sm text-gray-400">Theater Management</p>
           </div>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="hidden md:flex justify-center items-center p-1 rounded bg-red-600 hover:bg-red-500 text-white transition shadow-md"
+          className="hidden md:flex justify-center items-center p-1 rounded bg-teal-600 hover:bg-teal-500 text-white transition shadow-md"
         >
           {collapsed ? <Menu size={22} /> : <X size={22} />}
         </button>
@@ -66,8 +65,8 @@ export default function AdminLayout() {
               to={item.path}
               className={`flex items-center gap-3 px-2 py-2 rounded-md transition-all font-medium ${
                 active
-                  ? "bg-red-100 text-red-500 border-x-4 border-red-600"
-                  : "text-gray-700 hover:bg-red-100 border-x-4 border-transparent hover:border-red-600"
+                  ? "bg-teal-100 text-teal-500 border-x-4 border-teal-600"
+                  : "text-gray-700 hover:bg-teal-100 border-x-4 border-transparent hover:border-teal-600"
               }`}
             >
               {item.icon}
@@ -80,7 +79,7 @@ export default function AdminLayout() {
       {/* Exit Button */}
       <Link
         to="/"
-        className={`mt-6 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 rounded-md font-semibold transition ${
+        className={`mt-6 flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-md font-semibold transition ${
           collapsed ? "px-2" : ""
         }`}
       >
@@ -91,7 +90,7 @@ export default function AdminLayout() {
   );
 
   return (
-    <div className="flex h-screen overflow-hidden bg-red-50">
+    <div className="flex h-screen overflow-hidden bg-teal-50">
       {/* Desktop Sidebar */}
       <div className="hidden md:flex">
         <SidebarContent />
@@ -101,7 +100,7 @@ export default function AdminLayout() {
       <div className="md:hidden">
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="absolute top-4 left-4 z-50 p-2 bg-red-600 text-white rounded-md"
+          className="absolute top-4 left-4 z-50 p-2 bg-teal-600 text-white rounded-md"
         >
           <Menu size={22} />
         </button>

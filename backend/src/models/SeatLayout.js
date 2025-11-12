@@ -17,6 +17,7 @@ const seatLayoutSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true, trim: true },
     seats: [seatSchema],
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }
 );

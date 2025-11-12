@@ -40,6 +40,7 @@ export const registerAdmin = async (req, res) => {
       password: hashed,
       phone,
       role: "admin",
+      isApproved: true,
     });
 
     const token = createToken(admin);
@@ -51,6 +52,7 @@ export const registerAdmin = async (req, res) => {
         name: admin.name,
         email: admin.email,
         role: admin.role,
+        isApproved: admin.isApproved,
       },
       token,
     });
@@ -86,6 +88,7 @@ export const loginAdmin = async (req, res) => {
         name: admin.name,
         email: admin.email,
         role: admin.role,
+        isApproved: admin.isApproved,
       },
       token,
     });

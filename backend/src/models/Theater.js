@@ -19,9 +19,11 @@ const screenSchema = new mongoose.Schema({
 
 const theaterSchema = new mongoose.Schema(
   {
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false },
     name: { type: String, required: true, trim: true },
     location: { type: String, trim: true },
     screens: [screenSchema],
+    isApproved: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

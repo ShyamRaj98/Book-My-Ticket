@@ -3,7 +3,7 @@ import api from "../../api/axios";
 import { InputField, SelectInput } from "../../components/InputFields.jsx";
 import { MdEventSeat } from "react-icons/md";
 
-export default function AdminSeat() {
+export default function TheaterSeat() {
   const [layouts, setLayouts] = useState([]);
   const [selectedLayout, setSelectedLayout] = useState(null);
   const [layoutName, setLayoutName] = useState("");
@@ -19,21 +19,25 @@ export default function AdminSeat() {
     unavailable: "text-gray-500",
   };
 
+  // Load existing layouts on mount
   useEffect(() => {
     fetchLayouts();
     generateLayout(rows, cols);
     // eslint-disable-next-line
   }, []);
 
+  // ✅ Fetch theater admin's layouts
   async function fetchLayouts() {
     try {
-      const { data } = await api.get("/admin/seat-layouts");
+      const { data } = await api.get("/theater/seat-layouts");
       setLayouts(data || []);
     } catch (err) {
       console.error("Error loading layouts:", err);
+      alert("Failed to load seat layouts");
     }
   }
 
+  // ✅ Generate a new layout grid
   function generateLayout(r, c) {
     const newSeats = [];
     for (let i = 0; i < r; i++) {
@@ -51,10 +55,12 @@ export default function AdminSeat() {
     setSeats(newSeats);
   }
 
+  // ✅ Select seat for editing
   function handleSeatClick(i) {
     setSelectedSeat(seats[i]);
   }
 
+  // ✅ Update seat properties
   function updateSeat(type, price) {
     if (!selectedSeat) return;
     setSeats((prev) =>
@@ -67,17 +73,18 @@ export default function AdminSeat() {
     setSelectedSeat(null);
   }
 
+  // ✅ Save or update layout
   async function saveLayout() {
     if (!layoutName.trim()) return alert("Enter layout name");
     try {
       if (selectedLayout) {
-        await api.put(`/admin/seat-layouts/${selectedLayout}`, {
+        await api.put(`/theater/seat-layouts/${selectedLayout}`, {
           name: layoutName,
           seats,
         });
         alert("Layout updated successfully");
       } else {
-        await api.post("/admin/seat-layouts", { name: layoutName, seats });
+        await api.post("/theater/seat-layouts", { name: layoutName, seats });
         alert("Layout created successfully");
       }
       setLayoutName("");
@@ -86,10 +93,11 @@ export default function AdminSeat() {
       generateLayout(rows, cols);
     } catch (err) {
       console.error(err);
-      alert("Save failed");
+      alert(err.response?.data?.error || "Save failed");
     }
   }
 
+  // ✅ Load layout for editing
   function loadLayout(layout) {
     setSelectedLayout(layout._id);
     setLayoutName(layout.name);
@@ -98,10 +106,11 @@ export default function AdminSeat() {
     setCols(Math.max(...layout.seats.map((s) => s.number)));
   }
 
+  // ✅ Delete layout
   async function deleteLayout(id) {
     if (!window.confirm("Delete this layout?")) return;
     try {
-      await api.delete(`/admin/seat-layouts/${id}`);
+      await api.delete(`/theater/seat-layouts/${id}`);
       alert("Layout deleted");
       fetchLayouts();
       if (selectedLayout === id) {
@@ -111,18 +120,18 @@ export default function AdminSeat() {
       }
     } catch (err) {
       console.error(err);
-      alert("Delete failed");
+      alert(err.response?.data?.error || "Delete failed");
     }
   }
 
   return (
     <div className="p-6 space-y-10 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold text-gray-800 border-b pb-3">
-        Seat Layout Editor
+        Theater Seat Layout Manager
       </h1>
 
       {/* Controls Section */}
-      <div className="bg-white border-red-500 border border-x-4 p-3 md:p-6 rounded-xl shadow-lg grid lg:grid-cols-3 md:grid-cols-2 gap-5">
+      <div className="bg-white border-teal-500 border border-x-4 p-3 md:p-6 rounded-xl shadow-lg grid lg:grid-cols-3 md:grid-cols-2 gap-5">
         <InputField
           label="Layout Name"
           value={layoutName}
@@ -143,7 +152,7 @@ export default function AdminSeat() {
         />
         <button
           onClick={() => generateLayout(rows, cols)}
-          className="self-end bg-black text-white px-4 py-2 rounded-lg hover:bg-red-500 transition"
+          className="self-end bg-black text-white px-4 py-2 rounded-lg hover:bg-teal-500 transition"
         >
           Generate
         </button>
@@ -156,7 +165,7 @@ export default function AdminSeat() {
       </div>
 
       {/* Seat Grid */}
-      <div className="overflow-auto border-red-500 border border-x-4 rounded-xl bg-white p-3 md:p-6 shadow-md">
+      <div className="overflow-auto border-teal-500 border border-x-4 rounded-xl bg-white p-3 md:p-6 shadow-md">
         <div
           className="grid gap-2 justify-center"
           style={{
@@ -235,9 +244,9 @@ export default function AdminSeat() {
       )}
 
       {/* Saved Layouts */}
-      <div className="bg-white p-6 border-red-500 border border-x-4 rounded-xl shadow-lg">
+      <div className="bg-white p-6 border-teal-500 border border-x-4 rounded-xl shadow-lg">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
-          Saved Layouts
+          Your Saved Layouts
         </h2>
         {layouts.length === 0 ? (
           <p className="text-gray-500 italic">No saved layouts yet.</p>
@@ -246,7 +255,7 @@ export default function AdminSeat() {
             {layouts.map((l) => (
               <li
                 key={l._id}
-                className="flex justify-between items-center border-red-500 border border-x-4 p-3 rounded-lg hover:bg-gray-50 transition"
+                className="flex justify-between items-center border-teal-500 border border-x-4 p-3 rounded-lg hover:bg-gray-50 transition"
               >
                 <div>
                   <div className="font-medium text-gray-700">{l.name}</div>
@@ -263,7 +272,7 @@ export default function AdminSeat() {
                   </button>
                   <button
                     onClick={() => deleteLayout(l._id)}
-                    className="text-red-600 hover:underline"
+                    className="text-teal-600 hover:underline"
                   >
                     Delete
                   </button>

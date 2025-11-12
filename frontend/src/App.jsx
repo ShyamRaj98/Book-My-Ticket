@@ -3,14 +3,13 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import ProtectedRoute from "./components/ProtectedRoute";
+import {AdminRoute, TheaterRoute, UserRoute} from "./components/ProtectedRoute";
 import { fetchProfile } from "./features/auth/authSlice.js";
 import MovieDetail from "./pages/MovieDetail.jsx";
 import MovieSearch from "./pages/MovieSearch.jsx";
 import MovieDetailWrapperForTmdb from "./pages/MovieDetailWrapperForTmdb.jsx";
 import ShowtimeSeats from "./pages/ShowtimeSeats.jsx";
 import CheckoutPageWrapper from "./pages/Checkout.jsx";
-import AdminRoute from "./components/AdminRoute.jsx";
 import AdminReports from "./pages/admin/AdminReports.jsx";
 import BookingSuccess from "./pages/BookingSuccess.jsx";
 import AdminMovies from "./pages/admin/AdminMovies.jsx";
@@ -32,6 +31,14 @@ import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import PasswordSuccess from "./pages/PasswordSuccess.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import TheaterRegister from "./pages/TheaterRegister.jsx";
+import TheaterLayout from "./layouts/TheaterLayout.jsx";
+import TheaterMovies from "./pages/theater/TheaterMovies.jsx";
+import TheaterManage from "./pages/theater/TheaterManage.jsx";
+import TheaterSeat from "./pages/theater/TheaterSeat.jsx";
+import TheaterScreen from "./pages/theater/TheaterScreen.jsx";
+import TheaterShowtimes from "./pages/theater/TheaterShowtimes.jsx";
+import TheaterReport from "./pages/theater/TheaterReports.jsx";
 
 function AppContent() {
   const dispatch = useDispatch();
@@ -46,7 +53,7 @@ function AppContent() {
   }, [auth.token, auth.user, dispatch]);
 
   // Check if current route is admin
-  const isAdminRoute = ["/admin", "/register-admin", "/login-admin", "/login", "/register"].find((path) => location.pathname.startsWith(path));
+  const isAdminRoute = ["/theater", "/register-theater","/admin", "/register-admin", "/login-admin", "/login", "/register"].find((path) => location.pathname.startsWith(path));
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
@@ -58,6 +65,7 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/login-admin" element={<AdminLogin />} />
           <Route path="/register-admin" element={<RegisterAdmin />} />
+          <Route path="/register-theater" element={<TheaterRegister />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/password-success" element={<PasswordSuccess />} />
@@ -71,33 +79,33 @@ function AppContent() {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute>
+              <UserRoute>
                 <UserProfile />
-              </ProtectedRoute>
+              </UserRoute>
             }
           />
           <Route
             path="/my-bookings"
             element={
-              <ProtectedRoute>
+              <UserRoute>
                 <MyBooking />
-              </ProtectedRoute>
+              </UserRoute>
             }
           />
           <Route
             path="/showtimes/:id"
             element={
-              <ProtectedRoute>
+              <UserRoute>
                 <ShowtimeSeats />
-              </ProtectedRoute>
+              </UserRoute>
             }
           />
           <Route
             path="/checkout/:bookingId"
             element={
-              <ProtectedRoute>
+              <UserRoute>
                 <CheckoutPageWrapper />
-              </ProtectedRoute>
+              </UserRoute>
             }
           />
           <Route
@@ -122,6 +130,22 @@ function AppContent() {
             <Route path="screen-edit" element={<AdminScreenEditor />} />
             <Route path="reports" element={<AdminReports />} />
             <Route path="all-users" element={<AdminUsers />} />
+          </Route>
+
+          <Route
+            path="/theater"
+            element={
+              <TheaterRoute>
+                <TheaterLayout />
+              </TheaterRoute>
+            }
+          >
+            <Route path="movies" element={<TheaterMovies />} />
+            <Route path="my-theater" element={<TheaterManage />} />
+            <Route path="seatlayout" element={<TheaterSeat />} />
+            <Route path="screens" element={<TheaterScreen />} />
+            <Route path="showtimes" element={<TheaterShowtimes />} />
+            <Route path="reports" element={<TheaterReport />} />
           </Route>
         </Routes>
       </main>

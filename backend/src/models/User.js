@@ -20,9 +20,10 @@ const userSchema = new mongoose.Schema(
       required: true,
       match: [/^[0-9]{10}$/, "Invalid phone number"],
     },
-    role: { type: String, enum: ["user", "admin"], default: "user" },
+    role: { type: String, enum: ["user", "theater", "admin"], default: "user" },
     resetPasswordToken: String,
     resetPasswordExpires: Date,
+    isApproved: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

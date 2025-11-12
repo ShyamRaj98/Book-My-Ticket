@@ -16,6 +16,8 @@ import adminReportRoutes from "./src/routes/admin/adminReportRoutes.js";
 import { generateDailyReport } from "./src/utils/generateDailyReport.js";
 import adminSeatLayouts from "./src/routes/admin/adminSeatLayoutRoutes.js";
 import adminShowtimeRoute from "./src/routes/admin/AdminShowtimeRoutes.js";
+import theaterRoutes from "./src/routes/theater/theaterRoutes.js";
+
 // import adminAuthRoutes from "./src/routes/admin/adminAuth.js";
 
 dotenv.config();
@@ -51,6 +53,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/admin", adminSeatLayouts);
 app.use("/api/admin/users", adminUsersRoutes);
 app.use("/api/admin/showtimes", adminShowtimeRoute);
+app.use("/api/theater", theaterRoutes);
 app.use("/api/bookings", bookingsRoute);
 // after app.use(express.json()) and mounting API routes
 app.use("/api/payments", paymentsRoute);
