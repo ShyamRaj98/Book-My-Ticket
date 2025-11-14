@@ -30,6 +30,15 @@ stripe listen --forward-to https://your-backend-domain.com/api/webhooks/stripe
 - Generate sales and occupancy reports
 - Dashboard analytics and charts
 
+### 🧑 Theater Admin Features
+
+- Create & manage your own theaters after login
+- Add screens and assign custom seat layouts
+- Create showtimes only for your theaters
+- Manage movies available to your theater
+- View theater-wise reports (bookings, revenue, occupancy)
+- Full CRUD for screens, layouts, and theater showtimes
+
 ---
 
 ## Tech Stack
